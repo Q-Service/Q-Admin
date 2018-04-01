@@ -1,0 +1,850 @@
+^memory:compact[]
+$path[$form:path]
+^if(-f "$path"){
+$name[^file:basename[$path]]
+$fname[^file:justname[$path]]
+$fext[^file:justext[$path]]
+
+}
+
+###############################################################################################################################################################
+^if($form:operation eq "list_node"){
+
+	^file_manager_list[$path]
+
+}
+#end listFile
+
+##############################################################################################################################################################
+
+^if($form:operation eq "edit_node"){
+
+	^if(-d "$path" || !-f "$path"){ 
+		$ff[^file:list[$path]]
+		$flist[^table::create{name	f}]
+
+		^ff.menu{
+			$f[1]
+			^if(-d "${path}/${ff.name}"){$f[0]}
+			^flist.append{$ff.name	$f ${ff.name}}
+		}
+
+#sync pictures prw
+
+#		$pathNoSlash[^path.match[(\/)][]{}]
+
+		^if(!-d "/_PRW/${pathNoSlash}" ){$dirt[none] ^dirt.save[/_PRW/${pathNoSlash}/.dir]}
+
+		<div>
+		<table style="width:100%" border="0">
+		<tr>
+		<td align="center">
+
+		^flist.sort{$flist.name}
+# Для отдельного вывода редактора библиотеки
+		$pths[^path.match[//][]{/}]
+		$dirlib[^pths.split[/;lh]] 
+		^if($dirlib.2 eq "library"){ 
+		^connect[$CONNECT]{
+		$filetextlib[^table::sql{SELECT id, path, text, text_1, text_2, text_3 FROM ${BASE}filetext WHERE path LIKE "${pths}%"}]
+		}
+		}
+		^flist.menu{
+			^if($dirlib.2 eq "library"){ 
+#					редактирование библиотеки _server_file_manager.paj 224<br>
+				^if(${flist.name} ne ".dir"){
+				$ft[^filetextlib.select($filetextlib.path eq "${pths}/${flist.name}")[$.limit(1)]]
+				<div style="width:99%^;text-align:left^;">
+				<table width="100%">
+				<tr>
+				<td>id:</td><td>$ft.id</td><td style="width:20px^;">&nbsp^;</td>
+				</tr>
+				<tr>
+				<td style="width:60px^;"><a class="filetext" id="$ft.text_1" rel="${path}/${flist.name}" rev="${path}" style="cursor:pointer^; text-decoration:underline^;">Название:</a></td><td>$ft.text_1</td><td>&nbsp^;</td>
+				
+				</tr>
+				<tr>
+				<td style="width:60px^;"><a class="fileautor" id="$ft.text_2" rel="${path}/${flist.name}" rev="${path}" style="cursor:pointer^; text-decoration:underline^;">Автор:</a></td><td>$ft.text_2</td><td>&nbsp^;</td>
+				</tr>
+				<tr>
+				<td style="width:60px^;"><a href="${path}/${flist.name}" target="_blank" style="cursor:pointer^; text-decoration:underline^;">File name:</a></td><td>${flist.name} $f[^file::stat[${path}/${flist.name}]]  (^eval(${f.size} / 1024)[%.2u] KB)</td>
+				<td><div style="width:30px^; float:left^; text-align:right^;"><a rev="$path" rel="${path}/${flist.name}" style="cursor:pointer^;" class="delFile"><strong>X</strong></a></div></td>
+				</tr>
+				</table>
+				<hr>
+				</div>
+				}
+				}{
+
+			$ext[^file:justext[$flist.name]]
+			^if(^ext.lower[] eq "dir"){}{ 
+				^if(^ext.lower[] ne "bmp" && ^ext.lower[] ne "jpg" && ^ext.lower[] ne "gif" && ^ext.lower[] ne "png"){
+					^if(-d "${path}/${flist.name}"){$fsrc[/admin/_admin_img/mime/folder.png]
+					}{
+					$ext[^ext.lower[]]
+					$fsrc[^if(-f "/admin/_admin_img/mime/${ext}.png"){/admin/_admin_img/mime/${ext}.png}{/admin/_admin_img/mime/q.png}]
+					}
+				}{ 
+
+					$fsrc[/_PRW/${pathNoSlash}/$flist.name]
+	
+					^if(^ext.lower[] eq "bmp"){
+						^if(!-f "/_PRW/${pathNoSlash}/${flist.name}"){
+							$ap[^file::exec[/convert;;-scale;x${sizeMax};-antialias;${pathNoSlash}/${flist.name};_PRW/${pathNoSlash}/${flist.name}]]
+						}
+					}{
+	
+						^if(!-f "/_PRW/${pathNoSlash}/${flist.name}"){
+							$im[^image::measure[${path}/${flist.name}]]
+							^if($im.width >= $im.height){
+								$ap[^file::exec[/convert;;-scale;${sizeMax}x;-antialias;${pathNoSlash}/$flist.name;_PRW/${pathNoSlash}/${flist.name}]]
+							}{
+							$ap[^file::exec[/convert;;-scale;x${sizeMax};-antialias;${pathNoSlash}/${flist.name};_PRW/${pathNoSlash}/${flist.name}]]
+							}
+						}
+					}
+#end if -f
+				}
+#end if picture formats
+
+				$nameLength(^flist.name.length[])
+				^if($nameLength > 23){$shortName[^flist.name.left(14).....^flist.name.right(4)]}{$shortName[$flist.name]}
+				<div class="fileManagerPrwContainer">
+				<table class="filaManagerPrwTable" cellspacing="0" cellpadding="3">
+				<tr>
+				$im[^image::measure[$fsrc]]
+					^if($im.width > $im.height){$st[width:100px^;height:auto^;]}{$st[width:auto^;height:100px^;]}
+				<td height="160"><img  class="imgEdit" alt="/${pathNoSlash}/${flist.name}" src="$fsrc" style="$st^;cursor:pointer^;"></img></td>
+				</tr>
+				<tr>
+				<td class="fileManagerNameTd" valign="top" align="center"><div class="fileManagerName"><a class="fileName" title="$flist.name" rel="$path">$shortName</a></div></td>
+				</tr>
+				<tr>
+				^connect[$CONNECT]{$ftxt[^string:sql{SELECT text_${cookie:idx} FROM ${BASE}filetext where path = '/${pathNoSlash}/${flist.name}'}[$.limit(1) $.default[]]]}
+				<td style="text-align:left^;">
+				<div style="width:70px^;float:left^;"><a class="filetext" id="$ftxt" rel="/${pathNoSlash}/${flist.name}" rev="/${pathNoSlash}" style="margin-left:10px^;cursor:pointer^; text-decoration:underline^;">^if($ftxt ne ""){<b>}$_t._txt^if($ftxt ne ""){</b>}</a></div>
+				<div style="width:50%^; float:left^; text-align:right^;"><a class="delFile" style="cursor:pointer^;" rel="/${pathNoSlash}/${flist.name}" rev="/${pathNoSlash}"><strong>X</strong></a></div>
+				</td>
+				</tr>
+				</table>
+				</div>
+			}
+# end if eq dir
+}
+		}
+#end menu
+
+		</td>
+		</tr>
+		</table>
+	</div>
+<script>
+jQuery('a.fileName').click(function(obj){
+	var path = this.rel +'/'+ this.title ^;
+	^$.get('_server_file_manager.paj',{path: path , operation: 'infoFile'}, function(data) {
+	^$('#right-content').html(data)^;
+	})^;
+})^;
+
+jQuery('a.filetext').click(function(obj){
+	var path = this.rel ^;
+	var mpath = this.rev ^;
+	var ftxt = this.id ^;
+	jPrompt(path, ftxt, '', function(r) {
+		if( r ) 	^$.get('/admin/_admin_ajax/_server_file_manager_nodetext.paj',{path: path , txt: r, idx:'${cookie:idx}'}, function(data) {
+			^$.get('_server_file_manager.paj',{path: mpath , operation:'edit_node', idx:'${cookie:idx}', lang:'${cookie:idx}'}, function(data) {
+				^$('#middle-panel').html(data)^;
+				})^;
+			^$.get('_server_file_manager.paj',{path: path , operation:'infoFile', idx:'${cookie:idx}', lang:'${cookie:idx}'}, function(data) {
+				^$('#right-content').html(data)^;
+			})^;			
+		})^;	
+
+
+	})^;
+
+})^;
+
+jQuery('a.fileautor').click(function(obj){
+	var path = this.rel ^;
+	var mpath = this.rev ^;
+	var ftxt = this.id ^;
+	jPrompt(path, ftxt, '', function(r) {
+		if( r ) 	^$.get('/admin/_admin_ajax/_server_file_manager_nodeautor.paj',{path: path , txt: r, idx:'${cookie:idx}'}, function(data) {
+			^$.get('_server_file_manager.paj',{path: mpath , operation:'edit_node', idx:'${cookie:idx}', lang:'${cookie:idx}'}, function(data) {
+				^$('#middle-panel').html(data)^;
+				})^;
+			^$.get('_server_file_manager.paj',{path: path , operation:'infoFile', idx:'${cookie:idx}', lang:'${cookie:idx}'}, function(data) {
+				^$('#right-content').html(data)^;
+			})^;			
+		})^;	
+
+
+	})^;
+
+})^;
+
+jQuery('img.imgEdit').click(function(obj){
+	var path = this.alt ^;
+	^$.get('_server_file_manager.paj',{path:path, operation: 'edit_node', lang:'$cookie:idx', idx:'$cookie:idx'}, function(data) {
+		^$('#middle-panel').html(data)^;
+	})^;	
+	^$.get('_server_file_manager.paj',{path:path, operation: 'infoFile', lang:'$cookie:idx', idx:'$cookie:idx'}, function(data) {
+		^$('#right-panel').html(data)^;
+	})^;
+})^;
+
+jQuery('a.delFile').click(function(obj){
+	var path = this.rel ^;
+	var mpath = this.rev ^;
+	^$.get('_server_file_manager.paj',{path:path, operation: 'remove_node'}, function(data) {
+		^$.get('_server_file_manager.paj',{path:mpath, operation: 'edit_node', lang:'$cookie:idx', idx:'$cookie:idx'}, function(data) {
+		^$('#middle-panel').html(data)^;
+		})^;
+	})^;	
+	jQuery("#left-content").jstree("refresh")^;
+
+})^;
+</script>
+
+
+
+
+
+
+	}{
+# else -d
+		$file[^file::load[text;$path;$.charset[utf-8]]]}
+#		$ext[^file:justext[$path]]
+#		$ext[^ext.lower[]] 
+		^switch[$fext]{ 
+			^case[html;shtml;p;paj;txt;js;cfg;css;htaccess]{
+				<textarea id="" style="width: 99%^; height: 80%^;">^untaint[as-is]{$file.text}</textarea>
+				<br />
+				<input type="submit" name="save" value="Submit" onclick="javascript:
+				var ta=^$('textarea').val()^;
+				var at=^$('textarea').attr('id')^;
+		                ^$.post('_server_file_manager.paj',{path: at , operation: 'saveFile', text: ta }, function(at) {
+					^$.get('_server_file_manager.paj',{path: ^$('textarea').attr('id') , operation: 'edit_node'}, function(data) {
+					^$('middle-panel').html(data)^;
+					})^;
+				})^;
+				"/>
+			} 
+
+			^case[jpg;gif;png]{
+				$pict[^image::measure[$path]]
+				<table style="width: 100%^; height: 100%^; border-width: 1px^;">
+				<tr><td height="100%" align="center" valign="middle">
+				<div><img id="photo" src="$path?^math:random(50000)" width="${pict.width}" height="${pict.height}" border="0"></div>
+				</td>
+				<tr>
+				</tr>
+				<td></td>
+				</tr>
+				</table>
+			} 
+
+			^case[DEFAULT]{} 
+		}
+#end switch 
+
+#^untaint[as-is]{$file.text}
+}
+
+###############################################################################################################################################################
+^if($form:operation eq "create_node"){
+	$path[$form:path]
+	$name[$form:text]
+	^if(-d "$path"){
+		$croppath[$path]
+	}{
+	$croppath[^file:dirname[$path]]
+	}
+	$f[none]
+	^f.save[${croppath}/${name}/.dir]
+	^f.save[/_PRW$croppath/${name}/.dir]
+	$echo[${croppath}/${name}]
+}
+$echo
+
+############################################################################################################################################################### 
+^if($form:operation eq "rename_node"){
+	$path[$form:path]
+	$path[^form:path.match[\s][g]{}] 
+	$croppath[^file:dirname[$path]]
+	$pv[^croppath.split[/]]
+	$pcount(^pv.count[])
+	$ph[^croppath.split[/;lh]]
+	$croppath2[]
+	^for[i](1;^eval($pcount - 2)){$croppath2[${croppath2}/$ph.$i]}
+	$name[^rename_file_name[$form:text]]
+
+^if(-f "$path"){
+	$fname[^file:basename[$path]]
+	$fname[^file:justname[$path]]
+	$fext[^file:justext[$path]]
+}
+# folder or file
+^if(!-f "$path"){  d  
+# folder
+	$fl[^file:list[$path]]
+	^fl.menu{
+	^file:move[$path/$fl.name;$croppath/$name/$fl.name]
+	^if(-d "/_PRW$path"){^file:move[/_PRW${path}/$fl.name;/_PRW$croppath/${name}/$fl.name]}
+}
+# mysql filetext
+	^connect[$CONNECT]{
+		$ft[^table::sql{SELECT id, path FROM ${BASE}filetext WHERE path REGEXP "$path"}]
+		^ft.menu{
+				$newfname[^ft.path.match[$path][]{$croppath/$name}]
+				^void:sql{UPDATE ${BASE}filetext SET path = "$newfname" WHERE id = "$ft.id"}
+		}
+	}
+
+	}{ 
+# else
+# file  
+		$dotext[^name.pos[.]]
+		^if($dottext ne "-1"){
+			$namex[^name.split[.;fh]]
+			$name[$namex.0]
+		}
+		
+        ^file:move[$path;$croppath/${name}.$fext]
+        ^if(-f "/_PRW$path"){
+			^file:move[/_PRW$path;/_PRW$croppath/${name}.$fext]
+		}
+
+# mysql filetext
+		^connect[$CONNECT]{
+			^void:sql{UPDATE ${BASE}filetext SET path = "$croppath/${name}.$fext" WHERE path = "$path"}
+		}
+	
+	}
+#end if
+
+}
+
+###############################################################################################################################################################
+^if($form:operation eq "move_node"){
+^file:move[$path;${r_fpath}/$file]
+^if(-f "/_PRW$path"){
+^file:move[/_PRW$path;/_PRW${r_fpath}/$file]
+}
+# mysql filetext
+	^connect[$CONNECT]{
+		
+		^void:sql{UPDATE ${BASE}filetext SET path = "${r_fpath}/$file" WHERE path = "$path"}
+	}
+
+z1 = file:move[$path^;${r_fpath}/$file]<br>
+z2 = file:move[/_PRW$path^;/_PRW${r_fpath}/$file]<hr>
+UPDATE ${BASE}filetext SET path = "${r_fpath}/$file" WHERE path = "$path"
+
+}
+###############################################################################################################################################################
+^if($form:operation eq "remove_node"){zzz $path
+
+	^if(-d "$path"){
+		$flist[^file:list[$path]] xxx ^flist.count[] 
+		^if(^flist.count[] > 1){
+		    ^if(-f "${path}/.dir"){Yes ^file:delete[${path}/.dir]}{No}
+                    ^if(-f "/_PRW${path}/.dir"){^file:delete[/_PRW${path}/.dir]}
+
+		}			
+	}{
+                ^if(-f "$path"){
+                ^file:delete[$path]
+                ^connect[$CONNECT]{^void:sql{DELETE FROM ${BASE}filetext WHERE path='$path'}}
+		}
+		^if(-f "/_PRW$path"){
+		^file:delete[/_PRW$path]
+		}
+	}
+}
+
+###############################################################################################################################################################
+^if($form:operation eq "get_node"){^file_manager_list[^if(!def $form:path || $form:path eq "" || $form:path eq "#"){#;$path};$root]}
+
+###############################################################################################################################################################
+^if($form:operation eq "saveFile"){$ft[$form:text]^ft.save[$path;$.charset[utf-8]]} 
+
+###############################################################################################################################################################
+^if($form:operation eq "infoFile"){ 
+
+
+	$result[
+	<button id="userimages" class="ui-button ui-widget 	ui-state-^if($folder eq "userimages"){active;default} ui-corner-all ui-button-text-only" style="width:235px"><span class="ui-button-text">$_t._Picturesforpages<span></span></button>
+	<button id="galleries" class="ui-button ui-widget 	ui-state-^if($folder eq "galleries"){active;default} ui-corner-all ui-button-text-only" style="width:76px"><span class="ui-button-text">$_t._Galleries<span></span></button>
+	<button id="media" class="ui-button ui-widget 		ui-state-^if($folder eq "media"){active;default} ui-corner-all ui-button-text-only" style="width:76px"><span class="ui-button-text">$_t._Media<span></span></button>
+	<button id="banners" class="ui-button ui-widget 	ui-state-^if($folder eq "banners"){active;default} ui-corner-all ui-button-text-only" style="width:76px"><span class="ui-button-text">$_t._Banners<span></span></button>
+	<button id="documents" class="ui-button ui-widget 	ui-state-^if($folder eq "documents"){active;default} ui-corner-all ui-button-text-only" style="width:116px"><span class="ui-button-text">$_t._Documents<span></span></button>
+	<button id="templates" class="ui-button ui-widget 	ui-state-^if($folder eq "templates"){active;default} ui-corner-all ui-button-text-only" style="width:116px"><span class="ui-button-text">$_t._Templates<span></span></button>
+#	<button id="0" class="ui-button ui-widget 		ui-state-^if($folder eq "/"){active;default} ui-corner-all ui-button-text-only" style="width:235px"><span class="ui-button-text">$_t._Root<span></span></button>
+
+#zzz
+#^if($path eq "/"){$path[$fpath]}
+
+	<link href="/admin/fileuploader/fileuploader.css" rel="stylesheet" type="text/css" />
+	<script src="/admin/fileuploader/fileuploader.js" type="text/javascript"></script>
+	<div id="file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p></noscript></div>
+
+	<hr>
+
+
+	^if(def $path && -f "$path"){
+	<div id="infoFile">
+	$finfo[^file::stat[$path]] 
+	$name[^form:path.split[/;rh]] 
+#	$name.0 <hr>
+	<table>
+	<tr>
+	<td>${_t._node}:</td><td>$file</td>
+	</tr>
+	<tr>
+	<td>${_t._size}:</td><td>$size(^eval($finfo.size / 1024)) ^size.format[%.2f] KB </td>
+	</tr>
+	$ext[^file:justext[$path]]
+	^if(^ext.lower[] eq "jpg" || ^ext.lower[] eq "gif" || ^ext.lower[] eq "png"){
+		$pict[^image::measure[$path]]
+	<tr><td colspan="2">
+
+		<table width="239" border="0" cellspacing="0" cellpadding="3">
+		<tr><td colspan="6"><hr></td></tr>
+		<tr>
+		<td width="24" height="24" align="right" >w:</td>
+		<td height="24" align="right" scope="col"><input type="text" name="width" id="width"  value="${pict.width}" style="width:65px^;"
+
+		onChange="javascript:
+		rw = ${pict.width}^;
+		rh = ${pict.height}^;
+		ratio = rw / rh^;
+		nrh = getElementById('width').value / ratio^;
+		cp = getElementById('cp_lock').checked^;
+		if ( getElementById('cp_lock').checked == true ) jQuery('input#height').val(nrh) ^;
+		"></td>
+
+		<td width="24" height="24" align="left" >px</td>
+		<td width="24" height="24" align="right" scope="col">h:</td>
+		<td height="24" align="right"><input type="text" name="height" id="height" value="${pict.height}" style="width:65px^;"
+
+		onChange="javascript:
+		rw = ${pict.width}^;
+		rh = ${pict.height}^;
+		ratio = rh / rw^;
+		nrw = getElementById('height').value / ratio^;
+		cp = getElementById('cp_lock').checked^;
+		if ( getElementById('cp_lock').checked == true ) jQuery('input#width').val(nrw) ^;
+                "
+		></td>
+		
+		<td width="24" height="24" align="left" >px</td>
+		</tr>
+		<tr>
+		<td colspan="6"><label><input type="checkbox" id="cp_lock" checked="checked">Сохранять пропорции</label></td>
+		</tr>
+		<tr>
+		<td height="24" colspan="6" scope="col">
+		<input type="submit" name="resize" id="resize" value="Изменить размеры" style="width:100%^;" 
+		
+		onclick="javascript: 
+		var w=	^$('input#width').val()^;
+		var h=	^$('input#height').val()^;
+		var cp= getElementById('cp_lock').checked ^;
+#		var ar= getElementById('ar_lock').checked ^;
+		^$.ajax({
+			url: '_server_file_manager.paj', 
+			data: {operation: 'resize_node', path:'$path', w: w, h: h, cp: cp},
+			success: function(){},  
+			complete: function(){
+				^$.get('_server_file_manager.paj',{operation: 'edit_node', path:'$path'}, function(data) {
+				^$('#middle-panel').html(data)^;
+				})^;
+		
+				^$.get('_server_file_manager.paj',{operation: 'infoFile', path:'$path'}, function(data) {
+				^$('#right-content').html(data)^;
+				})^;
+		
+		         }
+
+		})
+                "/>
+		</td>
+		</tr>
+
+		<tr><td colspan="6"><hr></td></tr>
+
+		<tr>
+		<td colspan="6">
+			<table>
+			<tr>
+			<td width="24" align="right">x:</td>
+			<td width="24"><input id="x1" name="x" style="width:30px"></td>
+			<td width="24" align="right">y:</td>
+			<td width="24"><input id="y1" name="y" style="width:30px"></td>
+			<td width="24" align="right">w:</td>
+			<td width="24"><input type="text" name="w" id="w"  value="${pict.width}" style="width:30px"></td>
+			<td width="24" align="right">h:</td>
+			<td width="24"><input type="text" name="h" id="h" value="${pict.height}" style="width:30px"></td>
+			</tr>
+			</table>
+		</td>
+		</tr>
+
+		<tr>
+		<td colspan="6">
+			<fieldset class="optdual requiresjcrop">
+				<legend>Option Toggles</legend>
+				<div class="optlist offset">
+					<label><input type="checkbox" id="ar_lock" />Соотношение сторон  4:3</label><br>
+					<label><input type="checkbox" id="size_lock" />Ограничить min/max размер</label>
+				</div>
+			</fieldset>
+		</td>
+		</tr>
+	
+		<tr>
+		<td height="24" colspan="6"><input type="submit" name="crop" id="crop" value="Вырезать изображение"  style="width:100%^;" 
+		onclick="javascript: 
+		var x1=	^$('input#x1').val()^;
+		var y1=	^$('input#y1').val()^;
+		var x2=	^$('input#x2').val()^;
+		var y2=	^$('input#y2').val()^;
+		var w=	^$('input#w').val()^;
+		var h=	^$('input#h').val()^;
+		var ar= getElementById('ar_lock').checked ^;
+		^$.ajax({
+			url: '_server_file_manager.paj', 
+			data: {operation: 'cropFile', path:'$path', w: w, h: h, ar: ar, x1: x1, y1: y1, x2: x2, y2: y2},
+			success: function(){},  
+			complete: function(){
+				^$.get('_server_file_manager.paj',{operation: 'edit_node', path:'$path'}, function(data) {
+				^$('#middle-panel').html(data)^;
+				})^;
+		
+				^$.get('_server_file_manager.paj',{operation: 'infoFile', path:'$path'}, function(data) {
+				^$('#right-content').html(data)^;
+				})^;
+		
+		         }
+
+		})
+
+			"/>
+		</td>
+		</tr>
+		<tr><td colspan="6"><hr></td></tr>
+		<tr>
+		<td colspan="6">
+			<table width="100%">
+			<tr>
+			<td width="24"><input id="degr" name="degr" style="width:30px"></td>
+			<td width="5" align="right">°</td>
+			<td align="right">
+			<input type="submit" name="rotate" id="rotate" value="Повернуть изображение"  style="width:100%^;"
+			onclick="javascript: 
+			var w=	^$('input#w').val()^;
+			var h=	^$('input#h').val()^;
+			var degr= getElementById('degr').value ^;
+			^$.ajax({
+				url: '_server_file_manager.paj', 
+				data: {operation: 'rotateFile', path:'$path', w: w, h: h, degr: degr},
+				success: function(){},  
+				complete: function(){
+		
+			
+					^$.get('_server_file_manager.paj',{operation: 'infoFile', path:'$path'}, function(data) {
+						^$('#right-content').html(data)^;
+					})^;
+					
+					^$.get('/admin/_admin_ajax/_convert_prw.paj',{operation: 'convertPRW', path:'$path'}, function(data) {
+					})^;
+					
+					^$.get('_server_file_manager.paj',{operation: 'edit_node', path:'$path'}, function(data) {
+						^$('#middle-panel').html(data)^;
+					})^;
+			
+			         }
+	
+			})
+
+			"/>
+                        </td>
+			</tr>
+			</table>
+
+		</td>
+		</tr>
+
+		</table>
+	</td>
+	</tr>
+}
+# добавляем BMP
+	^if(^ext.lower[] eq "jpg" || ^ext.lower[] eq "gif" || ^ext.lower[] eq "png"|| ^ext.lower[] eq "bmp"){
+	<tr><td colspan="2"><hr></td></tr>
+	<tr>
+	<td colspan="2">
+	^if($folder eq "userimages"){
+		^connect[$CONNECT]{
+		$matchImg[^table::sql{SELECT id FROM ${BASE}content WHERE data LIKE '%$path%'}]
+		}
+	
+		^if(def $matchImg){Используется:<br> 
+		^matchImg.menu{/index.html?id=$matchImg.id}[, <br>]
+		}{Данное изображение на страницах сайта <b>не используется!</b>}
+	}
+	</td>
+	</tr>
+}
+	</table>
+	</div>
+}
+#end if def form:path
+
+
+
+<br>
+
+###------------------------------------------------------------------- File Uploader ----------------------------------------------------------------------------###
+#zzz
+^rem{
+form = $form:path<br>
+f   =  $f<br>
+folder = $folder<br>
+fpath =  $fpath<br>
+correct = $path<br>
+cookie = $cookie:jstree_select<br>
+fpath = $fpath<br>
+file = $file<br>
+fname = $fname<br>
+fext = $fext
+}
+#endrem
+  
+<script>
+var i=0 ^;        
+jQuery(function(){
+
+        var uploader = new qq.FileUploader({
+	element: document.getElementById('file-uploader'),
+	action: '/admin/fileuploader/fileuploader.paj',
+	allowedExtensions: 
+	                ^switch[$folder]{
+				^case[userimages;galleries;banners]{['jpg', 'jpeg', 'png', 'gif']}
+				^case[documents]{['doc', 'docx', 'pdf', 'exl', 'exlx', 'ppt', 'pptx', 'txt', 'rtf']}
+				^case[templates]{['htm', 'html', 'swf', 'js', 'php', 'p']}
+				^case[files]{['zip', 'tar', 'gz', '7z', 'rar', 'sit', 'sitx', 'jpg', 'jpeg', 'png', 'gif']}
+				^case[media]{['mp3', 'avi', 'flv', 'mpeg', 'flac', 'swf', 'jpg', 'gif', 'png', 'jpg', 'jpeg', 'png', 'gif']}
+				^case[library]{['htm', 'html', 'chm', 'mnt', 'doc', 'docx', 'pdf', 'rtf', 'txt', 'gif', 'png', 'jpg', 'djvu', 'exl', 'exls', 'ppt', 'pptx', 'zip', 'tar', 'gz', '7z', 'rar', 'sit', 'sitx']}
+				^case[DEFAULT]{['html', 'txt', 'jpg', 'jpeg', 'png', 'gif']}
+			}
+                        ,
+	multiple: false,
+	sizeLimit: 0,
+	params: {
+		proc: "$folder", //для распознавания папок (ресайз или нет)
+		uploadsDir: "$fpath"
+		},
+	template: 	'<div class="qq-uploader">' + 
+	               	'<div class="qq-upload-drop-area" style="width:235px"><span>Drop files here to upload</span></div>' +
+        		'<div class="qq-upload-button"  style="width:235px">$_t._uploadFiles</div>' +
+		        '<ul class="qq-upload-list"></ul>' + 
+			'</div>',
+
+	onSubmit:	function(id, fileName){},
+	onProgress:	function(id, fileName, loaded, total){},
+	onComplete:	function(id, fileName, responseJSON){
+jQuery.post('/admin/_server_file_manager.paj',{operation:"edit_node", path:"$fpath/"+fileName}, function(data){jQuery("#middle-panel").html(data)})
+jQuery.post('/admin/_server_file_manager.paj',{operation:"infoFile", path:"$fpath/"+fileName}, function(data){jQuery("#right-content").html(data)})
+jQuery("#left-content").jstree("refresh")^; 
+
+				},
+			onCancel: function(id, fileName){},   	 	
+
+	        })^;           
+	    })^;
+</script>	
+
+
+
+
+###------------------------------------------------------------------- Jcrop ----------------------------------------------------------------------------###
+
+<link href="_admin_js/jcrop/css/jquery.Jcrop.css" media="screen" rel="stylesheet" type="text/css" />
+<script src="_admin_js/jcrop/js/jquery.Jcrop.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+
+
+jQuery(function(^$){
+
+	var jcrop_api^;
+	initJcrop()^;
+
+function initJcrop(){
+
+	^$('.requiresjcrop').hide()^;
+
+	^$('img#photo').Jcrop(
+
+				{
+        			onChange:   showCoords,
+			        onSelect:   showCoords,
+		        	onRelease: releaseCheck       
+			 	},
+				function(){   
+                                		jcrop_api = this^;
+						jcrop_api.setSelect([0,0,^$('img#photo').attr('width'),^$('img#photo').attr('height')])^;
+						^$('#ar_lock,#size_lock,#bg_swap').attr('checked',false)^;
+						^$('.requiresjcrop').show()^;
+
+					}
+			)^;
+
+}^;
+
+function getRandom() {
+	var dim = jcrop_api.getBounds()^;
+	return [
+		Math.round(Math.random() * dim[0]),
+		Math.round(Math.random() * dim[1]),
+		Math.round(Math.random() * dim[0]),
+		Math.round(Math.random() * dim[1])
+		]^;
+}^;
+
+
+function releaseCheck(){
+	jcrop_api.setOptions({ allowSelect: true })^;
+        ^$('#can_click').attr('checked',false)^;
+}^;
+
+
+^$('#release').click(function(e) {
+	jcrop_api.release()^;
+})^;
+
+^$('#disable').click(function(e) {
+	jcrop_api.disable()^;
+	^$('#enable').show()^;
+	^$('.requiresjcrop').hide()^;
+})^;
+
+^$('#enable').click(function(e) {
+	jcrop_api.enable()^;
+	^$('#enable').hide()^;
+	^$('.requiresjcrop').show()^;
+})^;
+
+^$('#rehook').click(function(e) {
+	^$('#rehook,#enable').hide()^;
+	initJcrop()^;
+	^$('#unhook,.requiresjcrop').show()^;
+	return false^;
+})^;
+
+^$('#unhook').click(function(e) {
+	jcrop_api.destroy()^;
+	^$('#unhook,#enable,.requiresjcrop').hide()^;
+	^$('#rehook').show()^;
+	return false^;
+})^;
+
+^$('#can_click').change(function(e) {
+	jcrop_api.setOptions({ allowSelect: !!this.checked })^;
+	jcrop_api.focus()^;
+})^;
+
+^$('#can_move').change(function(e) {
+	jcrop_api.setOptions({ allowMove: !!this.checked })^;
+	jcrop_api.focus()^;
+})^;
+
+^$('#can_size').change(function(e) {
+	jcrop_api.setOptions({ allowResize: !!this.checked })^;
+	jcrop_api.focus()^;
+})^;
+
+^$('#ar_lock').change(function(e) {
+	jcrop_api.setOptions(this.checked?{ aspectRatio: 4/3 }: { aspectRatio: 0 })^;
+	jcrop_api.focus()^;
+})^;
+
+^$('#size_lock').change(function(e) {
+	jcrop_api.setOptions(this.checked? {
+		minSize: [ 40, 40 ],
+		maxSize: [ 800, 800 ]
+		}: {
+		minSize: [ 0, 0 ],
+		maxSize: [ 0, 0 ]
+		})^;
+	jcrop_api.focus()^;
+})^;
+
+})^;
+
+function showCoords(c){
+	^$('#x1').val(c.x)^;
+	^$('#y1').val(c.y)^;
+	^$('#x2').val(c.x2)^;
+	^$('#y2').val(c.y2)^;
+	^$('#w').val(c.w)^;
+	^$('#h').val(c.h)^;
+}^;
+
+function clearCoords(){
+	^$('#coords input').val('')^;
+	^$('#h').css({color:'red'})^;
+	window.setTimeout(function(){
+		^$('#h').css({color:'inherit'})^;
+		},500)^;
+}^;
+
+
+
+</script>
+###---------------------------
+
+
+
+
+
+]
+#end result 
+} 
+
+###############################################################################################################################################################
+^if($form:operation eq "resize_node"){
+#$path[$path]
+#$pathNoSlash[^path.match[(\/)][]{}]
+$af[^file::exec[/convert;;-resize;${form:w}x${form:h}^if($form:cp eq "true"){;!};-antialias;$pathNoSlash;$pathNoSlash]]
+
+$pathNoSlash<br>
+$af.status - text: $af.text - stderr: $af.stderr
+
+}
+###############################################################################################################################################################
+^if($form:operation eq "cropFile"){
+#$path[$path]
+#$pathNoSlash[^path.match[(\/)][]{}]
+$af[^file::exec[/convert;;-crop;${form:w}x${form:h}+${form:x1}+${form:y1};$pathNoSlash;$pathNoSlash]]
+
+$pathNoSlash<br>
+$af.status - text: $af.text - stderr: $af.stderr
+
+}
+
+###############################################################################################################################################################
+^if($form:operation eq "rotateFile"){
+#$path[$path]
+#$pathNoSlash[^path.match[(\/)][]{}]
+$af[^file::exec[/convert;;-rotate;${form:degr};$pathNoSlash;$pathNoSlash]]
+
+$pathNoSlash<br>
+$af.status - text: $af.text - stderr: $af.stderr
+
+}
+

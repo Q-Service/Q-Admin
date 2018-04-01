@@ -1,0 +1,285 @@
+name	loc
+_default	NoName!!!
+_add	Hozzáad
+_mainmenu	Fő menü
+_menu	Menü
+_menu_and_pages	Menü és oldalak
+_change	Szerkeszt
+_subsections	Alfejezet
+_position	Pozició
+_document	Dokumentum
+_onoff	Be./Ki(kapcs).
+_banner	Banner
+_main_page	Fő oldal
+_admin	Honlap adminisztrálása
+_login	Login(felhasználó)
+_pass	Password(Jelszó)
+_errorlog	Helytelen a Felhasználó név, jelszó
+_access		Hozzáférés megtagadva
+_h	ó
+_m	p
+_timetable	Az Ön Időbeosztása
+_host	Tárhely(hosting)
+_dir_num	Mappák száma
+_file_num	Fájlok száma
+_files_size	Fájlok által elfoglalt terület
+_base_size	Adatbázis mérete
+_site_size	A WebHonlap által elfoglalt össz.terület mérete
+_limit	Korlát
+_free_space	Szabad terület
+_news_num	Hírek száma
+_pages_num	Oldalak száma
+_bb_num	Hozzaászólások száma a fórumon
+_home	A Weboldalra
+_esc	Kilépés
+_choose_section	Válassza ki a részt
+_out_of_space	Túllépte a korlátot a 
+_news_txt	Hírek szövege
+_new	Új
+_choice	Választ
+_news	H1r
+_date	Dátum
+_link	Összekapcsolás
+_cancel	Mégse(Cancel)
+_01	Január
+_02	Február
+_03	Március
+_04	Április
+_05	Május
+_06	Junius
+_07	Julius
+_08	Augusztus
+_09	Szeptember
+_10	Október
+_11	November
+_12	December
+_mess_upd	Hozzászólás frissítve
+_mess_add	Hozzászólás hozzáadva
+_affiche_txt	Plakát szövege
+_affiche	Plakát
+_total	Összesen
+_name	Megnevezés
+_doc	Dokumentum
+_doc_no	Dokumentum nélkül
+_on	Bekapcsolva
+_edit	Szerkeszteni
+_no	Nem
+_del	Törölni
+_add_sub	Alfejezet hozzáadása
+_input_name	Adja meg a fejezet megnevezését
+_agree	Tényleg törölni szeretné ezt a pontot(részt)
+_kill_sub	Menü pont törlése
+_submit	Igen
+_rename	Átnevezni
+_new_item	Uj Név
+_in	a mappába:
+_download	Letölteni
+_audio_video	Audió, videó
+_pictures	Képek
+_files	Dokumentumok
+_send	Elküld
+_show_pict	Képek mutatása
+_inform	Fájl információ
+_close	Bezár
+_size	Méret
+_last	Használva volt
+_start	Létrehozva
+_create_file	Új fájl
+_folder	Mappa
+_copy	Másolni
+_move	Áthelyezni
+_save	Menteni
+_access_time	Hozzáférés idelye
+_end_time	-ig
+_start_time	-tól
+_privileges	Kiváltságok
+_all	Mind
+_name_bb	Név
+_txt	Szöveg
+_xhoice	Választás
+_user_name	Név
+_real_kill	Tényleg törölni szeretné
+_delete	Törlés
+_activate	Aktiválni
+_desactivate	InAktívvá tenni
+_show_menu	Menü mutatása
+_show	Aktív
+_title	Cím
+_text_in	Az Önnek küldendő szöveg - új felhasználó regiszrálásakor
+_text_out	A felhasználónak küldendő szöveg - regisztráláskor
+_text_ok	A "Hozzájárulás a regisztrációhoz" szöveg tartalma
+_e_app	E-mail a regiszrácios kérelemmel
+_e_err	E-mail a levélkézbesítési hibákról
+_auto_reg	Automatikusan regisztrálni
+_update	Frisíteni
+_copyright	Jogok
+_main_menu	Fő menü
+_res	erőforrások
+_file_man	Fájl manager(vezérlő)
+_admins	Adminisztrátorok
+_stat	Statisztika
+_bb	Hírdető tábla(Faliújság)
+_poster	Plakát
+_adj	Beállitások
+_users	Felhasználók
+_top	Felső menü
+_mail_set	Posta beállitások
+_site_admin	Adminisztrálás
+_newss	Hírek
+_info	személyes adatok
+_company_name	A Cég megnevezése
+_company_descr	a Cég leirása
+_company_address	a Cég címe
+_company_ph	Telefon / fax
+_company_mail	E-mail
+_server_stat	Server állapota
+_banner_txt	Szöveg szerkesztése
+_banner_link	Bannek hozzákapcsolása
+_weight	Súly
+_links	Hozzákötni
+_news_link_txt	A hozzákötés szövege
+_affiche_link_txt	A csatolási szöveg
+_help	Помощь
+_deactivate	Kikapcsolás
+_link_news_txt	A csatolás szövege
+_copy_file	Fájl másolása
+_move_file	Fájl áthelyezése
+_choose_folder	Válasszon mappát
+_banners	Bannerek
+_change_menu	Aktív Menü:
+_makedir	Új Mappa.
+_radio	Kérdőív
+_add_user	Új felhasználó
+_show_base	Adatbázis mutatása
+_edit_base	Adatbázis szerkesztése
+_select_base	Adatbázis kiválasztása
+_dublikate_login	Ilyen nevü felhasználó már létezik! Válasszon másikat.
+_reset	visszaállítás
+_reclam		Reklám
+_gallery	Galéria
+_media	Multimédiás fájlok
+_banner_panel	Bannerek panelje
+_in_format	formátumban
+_diplom		Diplomák
+_machine	Hardware
+_work_dir	Munka könyvtár(mappa)
+_signature	Aláírás
+_new_dir	Új mappa
+_dir_choice	Mappa választás
+_already_exists	Ilyen nevü fájl már létezik
+_read_attentively	Figyelmesen olvassuk, hogy milyen fájlokat küldhetünk a szerverre!
+_file	Fájl
+_name2	Az Ön neve
+_message_text	az üzenet szövege
+_create	Létrehoz
+_create_dir	Új mappa
+_kill_dir	Mappa törlése
+_a-z_0-9	Engedélyezett karakterek: a-z, 0-9 és az alávonás.
+_lenght_field	Mező hossza  
+_must_be_between	belül kell lennie  
+_between_and	-
+_between_signs	karakterek.
+_file_size	Fájl mérete
+_picture_size	Kép mérete
+_capture	Megnevezés
+_time_change	a csere ideje
+_algoritm	A csere algoritmusa
+_selected_banners	Választott bannerek
+_rotation_time	Csere időpontra
+_rotation_refresh	Csere átmenetekre
+_banners_show_activation	Bannerek kijelzésének aktiválása
+_banner_alert	A kijelzés kikapcsolása esetén, az adott ág rotációjában az alap bannereket foglya használni.
+_add_banner	Banner hozzáadása
+_act	Act.
+_news_link_text	>>>
+_affiche_link_text	>>>
+_mBt	mBt
+_templates	Sablonok
+_audio	Audió
+_video	Videó
+_documents	Dokumentumok
+_archives	Archívumok(tömöritett csomagok)
+_multimedia	Multimedia
+_CancelAllUploads	Minden feltöltés megszakítása.
+_file_s	fájl(ok)
+_galleries	Galéria
+_flash	Flash
+_hide	Elrejteni
+_empty	Üres
+_x-files	Titkos
+_up	Fel
+_dn	Le
+_log_history	Előzmények megtekintése
+_check_updates	Ellenőrizze a frissítéseket
+_xxxx	2
+_zxz	
+_quit	Kilépés
+_аbout	О
+_add_section	Új menüpont hozzáadása
+_public	Publikálni
+_witout_doc	Dokumentum nélkül
+_dont_public	Nem publikáljuk
+_with_doc	Dokumentummal
+_no_x_files	Titkosital feloldása
+_nickname	Név
+_asterixfield	A csillaggal jelzett mezők kitöltése kötelező!
+_dublicate_user	Ilyen nevü felhasználó már létezik!
+_plugins	Bővitmények
+_uploadFiles	Fájl feltöltése
+_cut	Kivág
+_wodoc	Dokumentum nélkül
+_paste	Beilleszt
+_blog_txt	Blog szövege
+_blog	Blog
+_shop	Áruház
+_shop_conf	Áruház beállitásai
+_publications	Publikációk
+_link_txt	Csatolások szövege
+_Picturesforpages	Képek az oldalon
+_Galleries	Galériák
+_Media	Média
+_Templates	Sablonok
+_Banners	Bannerek
+_Documents	Dokumentumok
+_Root	Gyökér mappa(Könyvtár)
+_title_p	Az oldal megnevezése
+_shedule	Ütemezés
+_library	Könyvtár
+_fURLt	A Név UNIKÁLIS kell, hogy legyen! Szünetjel helyett az kötőjel jelet használjuk! A Magyar Ékezetesek, az Orosz, ukrán és egyébb nemzeti karakterek --- Felejtősek!!! Az ilyen tipusu nevek mint "magunkrol", "kontaktusok", "kapcsolatok" - a fenébe. Tanuljuk az ENGLISH-t vagy a mancsokkal nem babráljuk ezt a mezőt!!!
+_slider	Csúszka
+_topslider	A felső csúszka
+_carousel	Körhinta
+_graph	Menetrend
+_tabnum	Táblázat №
+_year	év
+_splitlines	Osztott vonalak
+_maxx max X
+_#	№
+_summ	összeg
+_nm	Név
+_color	Szín
+_value	érték
+_digit_type	típusú érték
+_graph_type	Chart típus
+_money	pénz
+_img_text	Aláírás kép	
+_site	Webhely
+_address	Cím
+_phone	Telefon
+_pub	Kiadói
+_manager	Menedzser
+_errorUserBlock	Felhasználói fiók zárolva.
+_forgot_pass	Elfelejtetted a jelszavad?
+_no_matches_found	Nem található megfelelő beírás az adatbázisban.
+_temp_pass	Ideiglenes jelszó a fiókhoz.
+_temp_pass_send	Az Ideiglenes jelszó elküldve az E-mail címre.
+_no_email	Nincs megadva az E-Mail cím.
+_no_combination	Nem található megfelelő adatkombinácíó.
+_pass_changed	Jelszó megváltozott.
+_different_passwords	A megadott jelszavak nem egyeznek!
+_pass_change	Jelszó módosítása.
+_actions	Készlet
+_announcements	Közlemények
+_recommended	Ajánlott
+_Change	Változás
+_Add	Hozzáad

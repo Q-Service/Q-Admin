@@ -1,0 +1,24 @@
+#$path[/userfiles/lots]
+$path[$form:path]
+
+^if(def $form:name){
+	$fname[$form:name]
+	$fname[^fname.lower[]]
+	$jext[^file:justext[$form:name]]
+	$jname[^file:justname[$form:name]]
+	$fname[^hz2_to_translit[$jname]]
+	$fname[^fname.match[([ \.@#!&*\(\)^$^^])][g]{}]  
+	
+	
+	^if(-f "/admin/xxx/${form:uid}/${fname}.$jext"){
+	$fname[${jname}_^math:uid64[].$jext]
+	$fname[^fname.lower[]]
+	}
+}
+
+
+$dfile[$form:value]
+$data[^dfile.split[,;lh]]
+$encodedData[^data.1.match[ ][g]{+}]
+$decodedData[^file::base64[$encodedData]] 
+^decodedData.save[binary;$path/${form:uid}/${fname}.$jext]

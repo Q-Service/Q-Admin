@@ -1,0 +1,286 @@
+﻿name	loc
+_default	NoTranslate
+_add	Додати
+_mainmenu	Головне меню
+_menu	Меню
+_menu_and_pages	Меню і сторінки
+_change	Змiнити
+_subsections	Пiдроздiл
+_position	Позицiя
+_document	Документ
+_onoff	Вмк,/вимк,
+_banner	Банер
+_main_page	Головна сторiнка
+_admin	Адмiнiстрування
+_login	Логiн
+_pass	Пароль
+_errorlog	Помилкове запровадження iм`я, пароль
+_access	Вiдмова у доступi
+_h	г
+_m	х
+_timetable	Ваш розклад
+_host	Хостiнг
+_dir_num	Кiлькiсть тек
+_file_num	Кiлькiсть файлiв
+_files_size	Зайняте файлами мiсце
+_base_size	Розмiр бази даних
+_site_size	Сумарний розмiр
+_limit	Лiмiт
+_free_space	Вiльне мiсце
+_news_num	Кiлькiсть новин
+_pages_num	Кiлькiсть сторiнок
+_bb_num	Кiлькiсть повiдомлень у форумi
+_home	До сайту
+_esc	Вихiд
+_choose_section	Оберiть роздiл
+_out_of_space	Ви перевищили лiмiт
+_news_txt	Текст новин
+_new	Нова
+_choice	Вибiр
+_news	Новина
+_date	Дата
+_link	Прив`язка
+_cancel	Вiдмiна
+_01	Сiчень
+_02	Лютий
+_03	Березень
+_04	Квiтень
+_05	Травень
+_06	Червень
+_07	Липень
+_08	Серпень
+_09	Вересень
+_10	Жовтень
+_11	Листопад
+_12	Грудень
+_mess_upd	Повiдомлення оновлене
+_mess_add	Повiдомлення додане
+_affiche_txt	Текст афiши
+_affiche	Афiша
+_total	Всього
+_name	Назва
+_doc	Документ
+_doc_no	Без документу
+_on	Вмикнено
+_edit	Редагувати
+_no	Нi
+_del	Вилучити
+_add_sub	Додати підпункт
+_input_name	Введiть назву
+_agree	Ви дiйсно бажаєте вилучити пункт
+_kill_sub	Вилучити пункт меню
+_submit	Так
+_rename	Перейменувати
+_new_item	Нова назва
+_in	у теку
+_download	Завантажити
+_audio_video	Аудiо, вiдео
+_pictures	Картинки
+_files	Документи
+_send	Вiдправити
+_show_pict	Показати картинки
+_inform	Iнформацiя
+_close	Згорнути
+_size	Розмiр
+_last	Використовувався
+_start	Створити
+_create_file	Новий файл
+_folder	Тека
+_copy	Копиювати
+_move	Перенести
+_save	Зберегти
+_access_time	Час доступу
+_end_time	до
+_start_time	з
+_privileges	Привiлеї
+_all	Все
+_name_bb	Iм`я
+_txt	Текст
+_xhoice	Вибiр
+_user_name	Iм`я
+_real_kill	Ви дiйсно бажаєте вилучити
+_delete	Вилучити
+_activate	Активувати
+_desactivate	Дезактивувати
+_show_menu	Показати меню
+_show	Активно
+_title	Заголовок
+_text_in	Текст, який буде вiдправлено до Вас пiд час реєстрацiї
+_text_out	Текст, який буде вiдправлено користувачу пiд час реєстрацiї
+_text_ok	Текст згоди на реєстрцiю
+_e_app	E-mail для замовлень
+_e_err	E-mail для повiдомлень про помилки доставки пошти
+_auto_reg	Реєструвати автоматично
+_update	Оновити
+_copyright	Права
+_main_menu	Головне меню
+_res	Ресурси
+_file_man	Файловий менеджер
+_admins	Адмiнiстратори
+_stat	Статистика
+_bb	Дошка оголошень
+_poster	Афiша
+_adj	Настройки
+_users	Користувачи
+_top	Верхнє меню
+_mail_set	Поштовi настройки
+_site_admin	Адмiнiстрування
+_newss	Новини
+_info	Персональна iнформацiя
+_company_name	Назва компанiї
+_company_descr	Опис компанiї
+_company_address	Адреса компанiї
+_company_ph	Телефон/факс
+_company_mail	E-mail
+_server_stat	Стан сервера
+_banner_txt	Змiнити текст
+_banner_link	Прив`язка банеру
+_weight	Вагомiсть
+_links	Прив`язати
+_news_link_txt	Текст прив`язки
+_affiche_link_txt	Текст прив`язки
+_help	Допомога
+_deactivate	Дезактивувати
+_link_news_txt	Текст прив'язки
+_copy_file	Копиювання файлу
+_move_file	Перенесення файлу
+_choose_folder	Оберить теку
+_banners	Банери
+_change_menu	Активне меню
+_makedir	Створити директорію
+_radio	Опитування
+_add_user	Додати користувача
+_show_base	Показати базу
+_edit_base	Редагувати базу
+_select_base	Обрати базу
+_dublikate_login	Користувач з таким логіном вже існує! Оберить інший.
+_reset	Скинення
+_reclam	Реклама
+_gallery	Галерея
+_media	Мультімедийни файли
+_banner_panel	Дошка банерів
+_in_format	у форматі
+_diplom	Диплом
+_machine	Обладнання
+_work_dir	Робоча тека
+_signature	Підпис
+_new_dir	Нова тека
+_dir_choice	Вибір теки
+_already_exists	Файл з таким ім'ям вже існує
+_read_attentively	Читаємо уважно які файли можна відправляти на сервер!
+_file	Файл
+_name2	Ваше ім'я 
+_message_text	Текст повідомлення
+_create	Створити
+_create_dir	Створити теку
+_kill_dir	Видалити теку
+_a-z_0-9	Допускається використання знаків: а-z, 0-9 і підкресленн
+_lenght_field	Довжина поля  
+_must_be_between	повинна знаходитися в межах
+_between_and	-
+_between_signs	знакiв.
+_file_size	Розмір файлу
+_picture_size	Розмір картинки
+_capture	Загловок
+_time_change	Час заміни
+_algoritm	Алгоритм заміни
+_selected_banners	Вибрані банери
+_rotation_time	Заміна за часом
+_rotation_refresh	Заміна по переходах
+_banners_show_activation	Активація показу банерів
+_banner_alert	При дезактивації показу, в ротації для даної гілки меню використовуватимуться  банера основного фонду.
+_add_banner	Додати банер
+_act	Акт.
+_news_link_text	>>>
+_affiche_link_text	>>>
+_mBt	мБт
+_templates	Шаблони
+_audio	Аудіо
+_video	Відео
+_documents	Документи
+_archives	Архиви
+_multimedia	Мультимедіа
+_CancelAllUploads	Відмінити усі завантаження.
+_file_s	файл(ів)
+_galleries	Галереї
+_flash	Flash
+_hide	Заховати
+_empty	Порожній
+_x-files	Секрет
+_up	Вгору
+_dn	Вниз
+_log_history	Історія відвідин
+_check_updates	Перевірити оновлення
+_xxxx	3
+_zxz	
+_quit	Вихід
+_аbout	Про
+_add_section	Додати пункт меню
+_public	Опублікувати
+_witout_doc	Без документа
+_dont_public	Не публікувати
+_with_doc	З документом
+_no_x_files	Розсекретити
+_nickname	Им'я
+_asterixfield	Поля відмічені зірочками обов'язкові для заповнення!
+_dublicate_user	Користувач з таким ім'ям вже існує!
+_plugins	Доповнення
+_uploadFiles	Завантажити файли
+_cut	Вирізати
+_wodoc	Без документа
+_paste	Вставити
+_blog_txt	Текст публікації	
+_shop	Магазин
+_shop_conf	Налаштування магазину
+_publications	Публікації
+_link_txt	Текст прив`язки
+_Picturesforpages	Зображення на сторінки
+_Galleries	Галереї
+_Media	Медіа
+_Templates	Шаблони
+_Banners	Баннера
+_Documents	Документи
+_Root	Коренева тека
+_title_p	Заголовок сторінки
+_shedule	Розклад
+_library	Бібліотека
+_fURLt	Ім'я повинно бути унікальним! Замість пропусків використовуємо дефіс! Писати тільки англійською або лапами НЕ лапати це поле!
+_carousel	Карусель
+_graph	Графік
+_tabnum	Талиця №
+_year	Рік
+_splitlines	Розділові лінії
+_maxx Максимум X
+_#	№
+_summ	Sum
+_nm	Найменування
+_color	Колір
+_value	Значення
+_digit_type	Тип значення
+_graph_type	Тип графика
+_money	Гроши
+_img_text	Підпис до зображення
+_site	Сайт
+_address	Адреса
+_phone	Телефон
+_pub	Публікації
+_manager	Менеджер
+_caption	Заголовок
+_drag_im	Перетягніть зображення сюди
+_upload	Завантажити
+_upload_file	Завантажується файл
+_uploaded_files	 Завантажені файли
+_errorUserBlock	Обліковий запис заблоковано.
+_forgot_pass	Забули свій пароль?
+_no_matches_found	Не знайдено збігів в базі.
+_temp_pass	Тимчасовий пароль в особистий кабінет.
+_temp_pass_send	Тимчасовий пароль відправлено на електронну пошту.
+_no_email	Не вказана електронна пошта!
+_pass_changed	Пароль змінений.
+_different_passwords	Паролі не збігаються !
+_pass_change	Змінити пароль.
+_Change	Змінити
+_Add	Додати
+_actions	Акції
+_announcements	Оголошення
+_recommended	Рекомендації

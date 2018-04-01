@@ -1,0 +1,205 @@
+<!DOCTYPE>
+<html>
+# Q-admin v:5.0.1 (http://qservice.ws) # Copyright 2004-2015 Q-Service # Licensed under MIT # 2015.10.07 (2004.03.12) #    
+
+# under construction
+^if($form:a eq "root" || $cookie:user eq "sterveradmin"){}{
+#<script>document.location.href='under_construction.htm'</script>
+}
+
+^connect[$CONNECT]{
+<div>
+
+^if(def $form:idx || $form:idx ne ""){$cookie:idx[$.value[$form:idx]]}{$cookie:idx[$.value[1]]}
+
+
+}
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$_t._admin - $cookie:user</title>
+<link rel="stylesheet" href="_includes/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="_includes/bootstrap/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="_includes/bootstrap/css/bootstrap.min.css">
+
+<script src="_includes/jquery-2.1.4.min.js"></script>
+<script src="_includes/jquery-cookie-master/src/jquery.cookie.js"></script>
+
+
+
+<script src="_includes/bootstrap/js/bootstrap.min.js"></script>
+
+
+####### login
+<script type="text/javascript" src="_includes/loginform.js"></script> 
+<link href="_includes/login_page/screen.css" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" href="_includes/jwysiwyg/jquery.wysiwyg.css" type="text/css" />
+
+
+###### alerts
+<link type="text/css" href="_includes/jquery.alerts.css" rel="stylesheet" />
+
+
+####### timers
+#<script  type="text/javascript" src="_includes/jquery.timers.js"></script>
+
+####### cookie
+<script  type="text/javascript" src="_includes/jquery.cookie.js"></script>
+
+
+####### filestyle
+<script src="_includes/filestyle/jquery.filestyle.js" type="text/javascript" charset="utf-8"></script> 
+<link href="_includes/filestyle/filestyle.css" rel="stylesheet" type="text/css" />
+
+
+
+
+####### admin
+
+<link href="_includes/_admin.css" rel="stylesheet" type="text/css" />
+<link href="_includes/admin_nav_top.css" rel="stylesheet" type="text/css" /> 
+
+<script src="_includes/silviomoreto-bootstrap-select-a8ed49e/dist/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" href="_includes/silviomoreto-bootstrap-select-a8ed49e/dist/css/bootstrap-select.min.css">
+
+<script type="text/javascript">
+
+var ocbut = 'zzzzzzzzzzz' ^;
+jQuery(document).ready(function() {
+
+
+jQuery(function() {
+
+
+
+jQuery('#log').click(function() {
+	jQuery.get('/admin/_admin_ajax/_statistic_view.paj', function(data) {jQuery('#modal').html(data)^;})^;
+	jQuery('#dialog').attr('title', '$_t._log_history')^;
+	jQuery('#dialog').dialog({ 
+		width: 640,
+		close: function(event, ui) { jQuery(this).dialog( 'destroy' )^; }
+		 })^;
+})^;
+
+
+jQuery('body').on("click", ".ajax-userp", function() {
+	var vars = ''^;		
+	if(this.value != 'undefined') vars = this.value + '&'^;
+ 
+	if(this.type == 'confirm') 
+		if (!confirm('Can you confirm this?', 'Confirmation Dialog')){ vars = ''^; }^;
+	vars += 'returnto=' + this.id ^;
+	jQuery.get('/admin/_admin_ajax/_' + this.id + '.paj', vars, function(data) {jQuery('#user-panel').html(data)^; })^;
+})^;
+
+jQuery('form').on("click", "#ajax-form", function() {
+        alert("zzzzzz")^;
+		return false ^;
+})^;
+
+})^;
+
+function report() {
+	jQuery(".report").append('<img src="_admin_img/danger.png">')
+}^;
+
+})^;
+</script> 
+
+
+</head>
+^connect[$CONNECT]{
+
+<body id="body-main">
+^if(!def $cookie:sess){}
+^if(!def $cookie:sess){
+			$cookie:sess[$.value[^math:uid64[]] $.expires[session]] 
+			$cookie:s[$.value[1] $.expires[session]] 
+			$cookie:session_id[ $.value[^math:uid64[]] $.expires[session]]}
+
+	
+	^if(def $form:logout){$cookie:user[$.value[] $.expires[session]] $cookie:pass[$.value[] $.expires[session]] $cookie:session[$.value[] $.expires[session]] $cookie:s[$.value[] $.expires[session]] $cookie:session_id[$.value[] $.expires[session]]}
+	$authorised(0)
+	^if(def $form:user){$user[$form:user];$user[$cookie:user]}
+	$admins[^table::sql{SELECT * FROM ${BASE}admins WHERE login = '$user' OR email = '$user'}]
+	^if(def $form:user){
+		^if($form:user eq $admins.email){$user[$admins.login]}{$user[$form:user]}
+		$crypted[^math:crypt[$form:pass;^$apr1^$]]
+		$cookie:user[
+			$.value[$user] 
+			$.expires[session]
+			] 
+		$cookie:pass[
+			$.value[$admins.pass] 
+			$.expires[session]
+			]
+	^admins.menu{
+		^if(($cookie:user eq '$admins.login') && (^math:crypt[$form:pass;$admins.pass] eq $admins.pass) && ($admins.active ne "0")){
+			$authorised(1)
+		}{
+			$authorised(0) $cookie:user[] $cookie:pass[] $cookie:session[] $cookie:s[] $cookie:session_id[]
+		}
+	}
+	^if($authorised eq 0){<div class="alert alert-danger" role="alert" style="margin: 0 auto^;margin-top:25px^;width:385px^;text-align:center^;">^if($admins.active eq "0"){$_t._errorUserBlock}{^process{^untaint{$_t._errorlog}}}</div>}
+}
+$cp[^cookie:pass.match[%][g]{^$}] 
+
+^admins.menu{
+	^if(($cookie:user eq '$admins.login') && ($cp eq $admins.pass) && ($admins.active ne "0")){
+		$authorised(1)
+	}{
+		$authorised(0)  $cookie:user[] $cookie:pass[] $cookie:session[] $cookie:s[] $cookie:session_id[]
+	}
+}
+
+^if($authorised eq 0){
+########################################################## autorization_admin ##########################################################
+	$cookie:user[$.value[] $.expires[session]] 
+	$cookie:pass[$.value[] $.expires[session]] 
+	$cookie:session[$.value[] $.expires[session]] 
+	$cookie:s[$.value[] $.expires[session]] 
+	$cookie:session_id[$.value[] $.expires[session]]
+
+<div id="autorization_admin">^autorization_admin[]</div> 
+
+}{
+############################################################## work ##############################################################
+^connect[$CONNECT]{$localization[^string:sql{SELECT admin_lang FROM ${BASE}admin_set WHERE id = "1000"}[$.default[en]]]}
+$cookie:loc[$localization]
+$cookie:lang[$localization]
+^adminnav_top[]
+<div id="workzone" style="positiom: absolute^; height: auto^; left:0px^; right:0px^; top:60px^;">^applet[]</div>
+
+<div id="dialog" title="" style="display: none^; "><p><div id="modal"></div></p></div>
+<div id="prop-panel2"></div>
+<script type="text/javascript">
+#function poptimer() {jQuery.get('/admin/_admin_ajax/_statistic.paj',{authorised:'$authorised',sess:'$cookie:sess', session_id:'$cookie:session_id'})^;}^;
+#jQuery(document).everyTime(10000, function() { poptimer()^;})^;
+</script>
+
+
+
+}
+}
+<script>
+
+function onoff(t){
+	p=document.getElementById(t)^;
+	if(p.style.display=='none'){
+		p.style.display='block'^;}
+	else{
+		p.style.display='none'^;}
+}
+
+
+</script>
+
+
+</body>
+</html>
+
+
+
+

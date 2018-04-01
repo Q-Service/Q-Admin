@@ -1,0 +1,290 @@
+﻿name	loc
+_default	NoName!!!
+_add	Добавить
+_mainmenu	Главное меню
+_menu	Меню
+_menu_and_pages	Меню и страницы
+_change	Изменить
+_subsections	Подраздел
+_position	Позиция
+_document	Документ
+_onoff	Вкл./выкл.
+_banner	Баннер
+_main_page	Главная страница
+_admin	Администрирование сайта
+_login	Логин
+_pass	Пароль
+_errorlog	Неверно введено имя, пароль
+_access	Отказано в доступе
+_h	ч
+_m	м
+_timetable	Ваше расписание с
+_host	Хостинг
+_dir_num	Количество директорий
+_file_num	Количество файлов
+_files_size	Занимаемое файлами место
+_base_size	Размер базы данных
+_site_size	Суммарный размер сайта
+_limit	Лимит
+_free_space	Свободное место
+_news_num	Количество новостей
+_pages_num	Количество страниц
+_bb_num	Количество сообщений в форуме
+_home	На сайт
+_esc	Выход
+_choose_section	Выберите раздел
+_out_of_space	Вы превысили лимит на
+_news_txt	Текст новостей
+_new	Новая
+_choice	Выбор
+_news	Новость
+_date	Дата
+_link	Привязка
+_cancel	Отмена
+_01	Январь
+_02	Февраль
+_03	Март
+_04	Апрель
+_05	Май
+_06	Июнь
+_07	Июль
+_08	Август
+_09	Сентябрь
+_10	Октябрь
+_11	Ноябрь
+_12	Декабрь
+_mess_upd	Сообщение обновлено
+_mess_add	Сообщение добавлено
+_affiche_txt	Текст афиши
+_affiche	Афиша
+_total	Всего
+_name	Название
+_doc	Документ
+_doc_no	Без документа
+_on	Включен
+_edit	Редактировать
+_no	Нет
+_del	Удалить
+_add_sub	Добавить подпункт
+_input_name	Введите название раздела
+_agree	Вы действительно хотите удалить пункт
+_kill_sub	Удалить пункт меню
+_submit	Да
+_rename	Переименовать
+_new_item	Новое название
+_in	в директорию:
+_download	Закачать
+_audio_video	Аудио, видео
+_pictures	Картинки
+_files	Документы
+_send	Отправить
+_show_pict	Показать картинки
+_inform	Информация о файле
+_close	Закрыть
+_size	Размер
+_last	Использовался
+_start	Создан
+_create_file	Новый файл
+_folder	Папка
+_copy	Копировать
+_move	Перенести
+_save	Сохранить
+_access_time	Время доступа
+_end_time	по
+_start_time	с
+_privileges	Привилегии
+_all	Все
+_name_bb	Имя
+_txt	Текст
+_xhoice	Выбор
+_user_name	Имя
+_real_kill	Вы действительно хотите удалить
+_delete	Удалить
+_activate	Активировать
+_desactivate	Дезактвировать
+_show_menu	Показать меню
+_show	Активно
+_title	Заголовок
+_text_in	Текст отправляемый Вам при регистрации пользователя
+_text_out	Текст отправляемый пользователю при регистрации
+_text_ok	Текст согласия на регистрацию
+_e_app	E-mail для заявок на регистрацию
+_e_err	E-mail для сообщений об ошибках доставки почты
+_auto_reg	Регистрировать автоматически
+_update	Обновить
+_copyright	Права
+_main_menu	Главное меню
+_res	Ресурсы
+_file_man	Файловый менеджер
+_admins	Администраторы
+_stat	Статистика
+_bb	Доска объявлений
+_poster	Афиша
+_adj	Настройки
+_users	Пользователи
+_top	Верхнее меню
+_mail_set	Почтовые настройки
+_site_admin	Администрирование
+_newss	Новости
+_info	Персональная информация
+_company_name	Название компании
+_company_descr	Описание компании
+_company_address	Адрес компании
+_company_ph	Телефон / факс
+_company_mail	E-mail
+_server_stat	Состояние сервера
+_banner_txt	Изменить текст
+_banner_link	Привязка баннера
+_weight	Вес
+_links	Привязать
+_news_link_txt	Текст привязки
+_affiche_link_txt	Текст привязки
+_help	Помощь
+_deactivate	Дезактивировать
+_link_news_txt	Текст привязки
+_copy_file	Копирование файла
+_move_file	Перенос файла
+_choose_folder	Выберите папку
+_banners	Баннера
+_change_menu	Активное меню:
+_makedir	Создать директ.
+_radio	Опрос
+_add_user	Добавить пользователя
+_show_base	Показать базу
+_edit_base	Редактировать базу
+_select_base	Выбрать базу
+_dublikate_login	Пользователь с таким логином существует! Выберите другой.
+_reset	Сброс
+_reclam	Реклама
+_gallery	Галерея
+_media	Мультимедийные файлы
+_banner_panel	Панель баннеров
+_in_format	в формате
+_diplom	Дипломы
+_machine	Оборудование
+_work_dir	Рабочая директория
+_signature	Подпись
+_new_dir	Новая директория
+_dir_choice	Выбор директории
+_already_exists	Файл с таким именем уже существует
+_read_attentively	Читаем внимательно какие файлы можно отправлять на сервер!
+_file	Файл
+_name2	Ваше имя
+_message_text	Текст сообщения
+_create	Создать
+_create_dir	Cоздать директорию
+_kill_dir	Удалить директорию
+_a-z_0-9	Допускается использование знаков: a-z, 0-9 и подчеркивания.
+_lenght_field	Длина поля  
+_must_be_between	должна находиться в пределах 
+_between_and	-
+_between_signs	знаков.
+_file_size	Размер файла
+_picture_size	Размер картинки
+_capture	Заголовок
+_time_change	Время замены
+_algoritm	Алгоритм замены
+_selected_banners	Выбранные баннера
+_rotation_time	Замена по времени
+_rotation_refresh	Замена по переходам
+_banners_show_activation	Активация показа баннеров
+_banner_alert	При дезактивации показа, в ротации для данной ветки меню будут использоваться  баннера основного фонда.
+_add_banner	Добавить баннер
+_act	Акт.
+_news_link_text	>>>
+_affiche_link_text	>>>
+_mBt	мБт
+_templates	Шаблоны
+_audio	Аудио
+_video	Видео
+_documents	Документы
+_archives	Архивы
+_multimedia	Мультимедиа
+_CancelAllUploads	Отменить все загрузки.
+_file_s	файл(ов)
+_galleries	Галереи
+_flash	Flash
+_hide	Спрятать
+_empty	Пустой
+_x-files	Секрет
+_up	Вверх
+_dn	Вниз
+_log_history	История посещений
+_check_updates	Проверить обновления
+_xxxx	2
+_zxz	
+_quit	Выход
+_аbout	О
+_add_section	Добавить пункт меню
+_public	Опубликовать
+_witout_doc	Без документа
+_dont_public	Не опубликовывать
+_with_doc	С документом
+_no_x_files	Рассекретить
+_nickname	Имя
+_asterixfield	Поля отмеченные звездочками обязательны для заполнения!
+_dublicate_user	Пользователь с таким именем уже существует!
+_plugins	Дополнения
+_uploadFiles	Загрузить файлы
+_cut	Вырезать
+_wodoc	Без документа
+_paste	Вставить
+_blog_txt	Текст блога	
+_blog	Блог
+_shop	Магазин
+_shop_conf	Настройка магазина
+_publications	Публикации
+_link_txt	Текст привязки
+_Picturesforpages	Изображения на страницы
+_Galleries	Галереи
+_Media	Медиа
+_Templates	Шаблоны
+_Banners	Баннера
+_Documents	Документы
+_Root	Корневая папка
+_title_p	Заголовок страницы
+_shedule	Расписание
+_library	Библиотека
+_fURLt	Имя должно быть уникальным! Вместо пробела используем дефис! Пишим только по-английски или лапами не лапаем это поле!!!
+_slider	Слайдер
+_topslider	Верхний Слайдер
+_carousel	Карусель
+_graph	График
+_tabnum	Таблица №
+_year	Год
+_splitlines	Разделительные линии
+_maxx Размер по X
+_#	№
+_summ	Сумма
+_nm	Наименование
+_color	Цвет
+_value	Значение
+_digit_type	Тип значения
+_graph_type	Тип графика
+_money	Деньги
+_img_text	Подпись к изображению
+_site	Сайт
+_address	Адрес
+_phone	Телефон
+_pub	Публикации
+_manager	Менеджер
+_caption	Заголовок
+_drag_im	Перетяните сюда изображения
+_upload	Выгрузить
+_upload_file Выгружается файл
+_uploaded_files	Выгруженные файлы
+_errorUserBlock	Учетная запись заблокирована.
+_forgot_pass	Забыли пароль?
+_no_matches_found	Не найдено соответствий в базе.
+_temp_pass	Временный пароль в личный кабинет.
+_temp_pass_send	Временный пароль выслан на электронную почту.
+_no_email	Не указана электронная почта!
+_no_combination	Не найдено соответствия комбинации в базе.
+_pass_changed	Пароль изменен.
+_different_passwords	Пароли не совпадают!
+_pass_change	Изменить пароль.
+_actions	Акции
+_announcements	Анонсы
+_recommended	Рекомендуем
+_Change	Изменить
+_Add	Добавить

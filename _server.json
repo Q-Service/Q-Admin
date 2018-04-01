@@ -1,0 +1,227 @@
+^memory:compact[]
+^connect[$CONNECT]{
+$cataloque_id[^string:sql{SELECT id FROM ${BASE}structure WHERE plugLink = 'cataloque'}[$.limit(1) $.default{0}]]
+}
+^if(def $form:id){$id[^form:id.match[node_][]{}]}
+#===========================================================================================================
+
+^switch[$form:operation]{ 
+
+	^case[loadfile]{  
+		^connect[$CONNECT]{$bodytext[^string:sql{select data from ${BASE}content where id="$id"}[$.limit[1] $.default{No Data}]]}
+		^untaint{$bodytext}
+	}
+
+	^case[savefile]{  
+		^if(def $form:id){$id[^form:id.match[node_][]{}]}
+		^connect[$CONNECT]{
+			$data[^taint[js][$form:data]]
+			^void:sql{update ${BASE}content set data = "$data" where id = "$id"}
+		}
+		update ${BASE}content set data = "$data" where id = "$id"
+	}
+
+
+        ^case[rename_node]{  
+		^if($form:text ne ""){
+		^connect[$CONNECT]{
+            $data[^form:text.match[([\\])][g]{\\\\}]
+			$data[^data.match[(["])][g]{'}]
+
+			^void:sql{update ${BASE}structure set name = "$data" where id = "$id"}
+
+				^if($cataloque_id ne "0"){
+					$cid[^string:sql{SELECT id FROM ${BASE}cataloque WHERE id="$id"}[$.limit(1) $.default{0}]]
+					^if($cid ne "0"){^void:sql{update ${BASE}cataloque set f1 = "$data" where id = "$id"}}
+				}			
+		}
+		}
+	}
+
+
+	^case[delete_node]{  
+		^connect[$CONNECT]{
+			$childrens(^string:sql{SELECT COUNT(*) FROM ${BASE}structure where parent_id = "$id"})
+			$childrens
+				^if($childrens == 0){
+				^void:sql{DELETE FROM ${BASE}structure where id = "$id"}
+				$cid[^string:sql{SELECT id FROM ${BASE}content WHERE id="$id"}[$.limit(1) $.default{0}]]
+				^if($cid ne "0"){^void:sql{DELETE FROM ${BASE}content where id = "$id"}}
+				^if($cataloque_id ne "0"){
+					$cid[^string:sql{SELECT id FROM ${BASE}cataloque WHERE id="$id"}[$.limit(1) $.default{0}]]
+					^if($cid ne "0"){^void:sql{DELETE FROM ${BASE}cataloque where id = "$id"}}
+				}
+				$echo[Запись удалена]
+				}
+
+		}
+	}
+
+
+
+
+	^case[get_node]{  
+		^connect[$CONNECT]{
+			$list[^table::sql{select * from ${BASE}structure where idx = "^if(def $form:idx){$form:idx;1}" and parent_id = "^if($form:idx eq "" && $form:id eq "#"){0;$id}" ORDER BY position}]
+	[
+^list.menu{
+	$rel[folder]
+	$child[^table::sql{select parent_id from ${BASE}structure where parent_id = "$list.id"  ORDER BY position}]
+	^if(^child.count[] == 0){$icon[file];$icon[folder]}
+	^if($id eq 0){$icon[drive]}
+	$cont[^table::sql{select * from ${BASE}structure where id = "$list.id"}]
+	$flag[f${cont.active}${cont.q}${cont.del_no}${cont.container}${cont.secret}${cont.banner_link}]
+{"id":"$list.id", "text": "^string:sql{select name from ${BASE}structure where id ="$list.id"}[$.limit(1) $.default[NoName]]", "children" : ^if(^child.count[] == 0){false;true}, "icon":"^if(^child.count[] == 0){file;folder}", ^if($list.id eq "1000"){"type":"root",}"flag":"$flag" }
+}[,]
+	]
+}
+	}
+}
+#end switch
+#===========================================================================================================
+
+# перемещение (def $form:id)
+
+
+
+^if(($form:operation eq "move_node") && (def $form:id) && (def $form:position) && (def $form:parent)){
+
+$id[$form:id]
+$parent_id[$form:parent]
+^connect[$CONNECT]{
+
+# транспортируемый элемент
+$transportEl[^table::sql{SELECT * FROM ${BASE}structure WHERE id="$id"}]
+
+# корневой элемент блока в который производится перемещение
+$parent[^string:sql{SELECT parent_id FROM ${BASE}structure WHERE id="$parent_id" AND idx="$cookie:idx"}[$.limit(1)]]
+parent =  $parent
+# если самый верхний элемент (parent_id = 0) !!!
+^if($parent eq "0"){$parent[$form:parent]}
+
+^switch[$form:operation]{ 
+
+	^case[move_node]{  
+
+$id[$form:id]
+$parent_id[$form:parent]
+
+  id=$id  parent=$parent_id <br>
+
+# элемент, перед которым будет помещен транспортируемый элемент
+$beforeEl[^table::sql{SELECT * FROM ${BASE}structure WHERE id="$parent_id"}]
+
+# выбираем корневые элементы без транспортируемого элемента
+$rootEls[^table::sql{SELECT * FROM ${BASE}structure WHERE idx="$cookie:idx"  AND  parent_id = "$parent_id" AND id !="$id" ORDER BY position}]
+SELECT * FROM ${BASE}structure WHERE idx="$cookie:idx"  AND  parent_id = "$parent_id" AND id !="$id" ORDER BY position
+
+
+
+$position($form:position + 1)
+
+$i(1)
+^if($form:position ne "0"){
+^rootEls.menu{
+^void:sql{update ${BASE}structure set   parent_id = "$rootEls.parent_id", position = "$i" where id = "$rootEls.id"}
+1.update ${BASE}structure set   parent_id = "$rootEls.parent_id", position = "$i" where id = "$rootEls.id"
+
+^if($form:position eq $i){ 
+^i.inc[]
+^void:sql{update ${BASE}structure set   parent_id = "$rootEls.parent_id", position = "$i" where id = "$transportEl.id"}
+2.update ${BASE}structure set   parent_id = "$rootEls.parent_id", position = "$i" where id = "$transportEl.id"
+}
+
+^i.inc[] 
+}
+#end menu
+}{
+
+# добавляем в начало новый элемент
+^void:sql{update ${BASE}structure set   parent_id = "$parent_id", position = "$i" where id = "$transportEl.id"}
+update ${BASE}structure set   parent_id = "$parent_id", position = "$i" where id = "$transportEl.id"
+
+^rootEls.menu{
+^i.inc[] 
+^void:sql{update ${BASE}structure set   parent_id = "$rootEls.parent_id", position = "$i" where id = "$rootEls.id"}
+update ${BASE}structure set   parent_id = "$rootEls.parent_id", position = "$i" where id = "$rootEls.id"
+
+}
+#end menu
+
+}
+#end if
+
+
+} 
+#end case move_node
+
+
+}
+#end switch 
+
+}
+#end connect
+}
+#end first if (def $form:id)
+#===========================================================================================================
+
+
+
+
+
+^switch[$form:operation]{ 
+
+^case[create_node]{
+$data[^form:text.match[([\\])][g]{\\\\}]
+$data[^data.match[(["])][g]{'}]
+^connect[$CONNECT]{
+
+$parent_id[$form:id]
+
+# элемент, за которым будет помещен транспортируемый элемент
+$afterEl[^table::sql{SELECT * FROM ${BASE}structure WHERE id="$parent_id"}]
+
+# выбираем корневые элементы 
+$rootEls[^table::sql{SELECT * FROM ${BASE}structure WHERE idx="$form:idx"  AND  parent_id = "$parent_id" ORDER BY position}]
+$parent_id[^if(def $rootEls){$rootEls.parent_id;$parent_id} ]
+
+$data[^form:text.match[([\\])][g]{\\\\}]
+$data[^data.match[(["])][g]{'}]
+
+
+$i(^rootEls.count[])
+^i.inc[]
+^void:sql{INSERT INTO ${BASE}structure set idx = "$form:idx", parent_id = "$parent_id", position = "$i", name = "$data", title = "$data"}
+#i=$i
+#INSERT INTO ${BASE}structure set idx = "$form:idx", parent_id = "$parent_id", position = "$i", name = "$data", title = "$data"
+$id[^string:sql{SELECT id FROM ${BASE}structure WHERE idx = "$form:idx" AND parent_id = "$parent_id" AND position = "$i" AND name = "$data"}[$.limit(1)]]
+^void:sql{INSERT INTO ${BASE}content set id = "$id", data = ""}
+#INSERT INTO ${BASE}content set id = "$id", data = ""
+	^if($cataloque_id ne "0"){
+		^void:sql{INSERT INTO ${BASE}cataloque set id = "$id", f1 = "$data", art="^math:uid64[]"}
+		}
+## echo id!!!!!
+$echo[$id]
+$echo
+}
+#end connect
+
+}
+#end create_node
+
+^case[zzz]{
+}
+#end before
+^case[xxx]{
+}
+#end inside
+
+
+
+}
+#end swich
+#===========================================================================================================
+
+
+
+

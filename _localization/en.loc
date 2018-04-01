@@ -1,0 +1,289 @@
+﻿name	loc
+_default	NoTranslate
+_add	Add
+_mainmenu	Main menu
+_menu	Menu
+_menu_and_pages	Menu & Pages
+_change	Change
+_subsections	Subsection
+_position	Position (up\down)
+_document	Document
+_onoff	On/Off
+_banner	Banner
+_main_page	Main Page
+_admin	Site Admin
+_login	Login
+_pass	Password
+_errorlog	Untrue Login Or Password
+_access	it Is refused in access
+_h	h
+_m	m
+_timetable	Your timetable
+_host	Host Name
+_dir_num	Amount a directory
+_file_num	Amount of files
+_files_size	Occupied files place
+_base_size	MySQL Size
+_site_size	Site Size
+_limit	Limit
+_free_space	Free Space
+_news_num	Amount of news
+_pages_num	Amount of pages
+_bb_num	Amount of forum
+_home	On Site
+_esc	Escape
+_choose_section	Choose section
+_out_of_space	Out of space
+_news_txt	News Text
+_new	New
+_choice	Choice
+_news	News
+_date	Date
+_link	Link
+_cancel	Cancel
+_01	January
+_02	February
+_03	Marth
+_04	April
+_05	May
+_06	June
+_07	July
+_08	August
+_09	September
+_10	October
+_11	Novenber
+_12	December
+_mess_upd	Message is updated
+_mess_add	Message is added
+_affiche_txt	Text of poster
+_affiche	Poster
+_total	Total
+_name	Name
+_doc	Document
+_doc_no	Without document
+_on	On
+_edit	Edit
+_no	No
+_del	Delete
+_add_sub	Add Subsection
+_input_name	Input Name
+_agree	You Agree
+_kill_sub	Kill Subsection
+_submit	Submit
+_rename	Rename
+_new_item	New Item
+_in	in folder:
+_download	Download
+_audio_video	Audeo, Video
+_pictures	Pictures
+_files	Files
+_send	Send
+_show_pict	Show Pictures
+_inform	File Info
+_close	Close
+_size	Size
+_last	Last
+_start	Start
+_create_file	Create File
+_folder	Folder
+_copy	Copy
+_move	Move
+_save	Save
+_access_time	Time of access
+_end_time	End
+_start_time	Start
+_privileges	Privileges
+_all	All
+_name_bb	Name
+_txt	Text
+_xhoice	Choice
+_user_name	User Name
+_real_kill	You really want to delete
+_delete	Delete
+_activate	Activate
+_desactivate	Desactivate
+_show_menu	Show Menu
+_show	Show
+_title	Title
+_text_in	The text sent to you at registration of the user
+_text_out	text sent to the user at registration
+_text_ok	The text of the consent to registration
+_e_app	E-mail for applications for registration
+_e_err	E-mail for error messages of delivery of mail
+_auto_reg	To register automatically
+_update	Update
+_copyright	Copyright
+_main_menu	Main Menu
+_res	Download Center
+_file_man	File Menager
+_admins	Admins
+_stat	Statistics
+_bb	Billboard
+_poster	Poster
+_adj	Adjustment
+_users	Users
+_top	Top Menu
+_mail_set	Mail Set
+_site_admin	Administration
+_newss	News
+_info	Personal information
+_company_name	Company Name
+_company_descr	Company Description
+_company_address	Address
+_company_ph	Phone/fax
+_company_mail	E-mail
+_server_stat	Server Statistic
+_banner_txt	Change Text
+_banner_link	Banner Link
+_weight	Weight
+_links	Link
+_news_link_txt	Link Text
+_affiche_link_txt	Link Text
+_help	Help
+_deactivate	Unlink
+_link_news_txt	Link Text
+_copy_file	File Copy
+_move_file	File Move
+_choose_folder	Choose Folder
+_banners	Banners
+_change_menu	Change menu:
+_makedir	Make Dir
+_radio	Radio
+_add_user	Add User
+_show_base	Show base
+_edit_base	Edit base
+_select_base	Select_base
+_dublikate_login	Dublicate Login 
+_reset	Reset
+_reclam	Advertisiment
+_gallery	Gallery
+_media	Multimedia
+_banner_panel	Banner panel
+_in_format	data format
+_diplom	Diplomes
+_machine	Machines
+_work_dir	Work Folder
+_signature	Signature
+_new_dir	New Folder
+_dir_choice	Directory choice
+_already_exists	The file with such name already exists
+_read_attentively	We read attentively what files it is possible to send on a server!
+_file	File
+_name2	Name
+_message_text	Message text
+_create	Create
+_create_dir	Create folder
+_kill_dir	Delete folder
+_a-z_0-9	Field may consist of a-z, 0-9, underscores, begin with a letter.
+_lenght_field	Length of this field
+_must_be_between	must be between
+_between_and	and
+_between_signs	.
+_file_size	File size
+_picture_size	Picture size
+_capture	Capture
+_time_change	Time of change
+_algoritm	Algorithm of change
+_selected_banners	Selected banners
+_rotation_time	Rotation time
+_rotation_refresh	Refresh rotation
+_banners_show_activation	Activating of show of banners
+_banner_alert	During decontamination of show, in a rotary press for this branch of menu will be used  banner of general fund.
+_add_banner	Add Banner
+_act	Act.
+_news_link_text	>>>
+_affiche_link_text	>>>
+_mBt	mBt
+_templates	Templates
+_audio	Audio
+_video	Video
+_documents	Documents
+_archives	Archives
+_multimedia	Multimedia
+_CancelAllUploads	Cancel All Uploads.
+_file_s	file(s)
+_galleries	Galleries
+_flash	Flash
+_hide	Hide
+_empty	Empty
+_x-files	X-Files
+_up	Up
+_dn	Down
+_log_history	Log History
+_check_updates	Check Updates
+_xxxx	1
+_zxz	
+_quit	Quit
+_аbout	About
+_add_section	Add Section
+_public	Public
+_witout_doc	Witout Document
+_dont_public	Don't Public
+_with_doc	With a Document
+_no_x_files	No X-Files
+_nickname	Name
+_asterixfield	Fields the marked asterisks is obligatory for filling!
+_dublicate_user	Dublicate User
+_plugins	Plugins
+_uploadFiles	Upload Files
+_cut	Cut
+_wodoc	Without Document
+_paste	Paste
+_blog_txt	
+_shop	Shop
+_shop_conf	Shop Preferences
+_publications	Publications
+_link_txt	Link Text
+_Picturesforpages	Pictures for pages
+_Galleries	Galleries
+_Media	Media
+_Templates	Templates
+_Banners	Banners
+_Documents	Documents
+_Root	Root
+_title_p	Page Title
+_shedule	Shedule
+_library	Library
+_fURLt	Unique Name (only a-z0-9) No Space! 
+_slider	Slider
+_topslider	Top Slider
+_carousel	Carousel
+_graph	Chart
+_tabnum	Table #
+_year	Year
+_splitlines	Split Lines
+_maxx max X
+_#	#
+_summ	Sum
+_nm	Name
+_color	Color
+_value	Value
+_digit_type	Type Of Value
+_graph_type	Chart Type
+_money	Money
+_img_text	Signature picture
+_site	Web site
+_address	Address
+_phone	Phone
+_pub Publishing
+_caption	Caption
+_drag_im	Drag an image here
+_upload	Upload
+_upload_file File Uploaded
+_uploaded_files	Uploaded Files
+_manager	Manager
+_errorUserBlock	The account is blocked.
+_forgot_pass	Forgot your password?
+_no_matches_found	No matches found in the database.
+_temp_pass	Temporary password to your personal account.
+_temp_pass_send	A temporary password sent to your email.
+_no_email	Not specified E-mail!
+_no_combination	No matching combinations in the database.
+_pass_changed	Password changed.
+_different_passwords	Different passwords!
+_pass_change	Change Password.
+_actions	Stock
+_announcements	Announcements
+_recommended	Recommended
+_Change	Change
+_Add	Add
