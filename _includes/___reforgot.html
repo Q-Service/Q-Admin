@@ -1,0 +1,42 @@
+<html>
+<head>
+<script type="text/javascript" src="_includes/jquery-2.1.4.min.js"></script>
+<link href="_includes/login_page/screen.css" rel="stylesheet" type="text/css">
+</head>
+^if(($form:pass ne "") && ($form:pass eq $form:repass)){
+^connect[$CONNECT]{
+$u[^string:sql{SELECT id FROM ${BASE}admins WHERE login = "$cookie:user"}[$.limit(1) $.default[no]]]
+$p[^form:pass.match[\W*][g]{}]
+$cr[^math:crypt[$p;^$apr1^$]]
+^void:sql{UPDATE ${BASE}admins SET pass = "$cr", temporary_password = "0" WHERE id = "$u"}
+$echo[$_t._pass_changed:$p]
+^sender[QAdmin;robot@zoneadmin.biz;$form:user_email;$_t._pass_changed;;$echo;]
+$echo[1]
+$echo	
+}
+<script>document.location.href = "/admin"^;</script>
+}
+<body style="width:100%;height:100%^;background-color: #eaeaea^;margin:0^;padding:0^;">
+<div id="loginform" class="box form" style="display: block;top:250">
+#<h2></h2>
+#<a href="" class="close">$_t._close</a>
+<div class="login-page">
+  <div class="lform">
+
+<fieldset id="signin_menu" style="margin-top:40px^;border: none;">
+      <form class="login-form" method="GET" id="rechangep" action="/admin/___reforgot.html">
+        <input type="password" name="pass" placeholder="$_t._pass"/>
+        <input type="password" name="repass" placeholder="$_t._pass"/>
+        <button id="signin_submit" value="$_t._change" type="submit">$_t._change</button>
+        
+        <span class="result message"></span>
+
+      </form>
+</fieldset>
+</div>
+</div>
+
+
+
+</body>
+</html>
