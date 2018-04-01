@@ -1,0 +1,356 @@
+/*
+	 CSS-Tricks Example
+	 by Chris Coyier
+	 http://css-tricks.com
+*/
+
+body {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	line-height: 15px;
+;
+}
+
+html, body, #bg, #bg table, #bg td, #cont {
+    height:100%;
+    width:100%;
+
+}
+
+
+.login-page {
+  width: 360px;
+  padding: 0;
+  margin: auto;
+}
+.lform {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 20% auto 100px;
+  padding: 25px 45px 45px;
+  text-align: center;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  background-image:url("data:image/png;base64,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");
+  background-repeat: no-repeat;
+  background-position-y:-1px; 
+}
+.lform p{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    outline: 0;
+    font-size: 12px;
+}
+.lform input {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 12px;
+}
+.lform button {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #983032;
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 12px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.lform button:hover,.lform button:active,.lform button:focus {
+  background: #941919;
+}
+.lform .message {
+  margin: 15px 0 0;
+  color: #941919;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  outline: 0;
+  font-size: 12px;
+}
+.lform .message a {
+  color: #909090;
+  text-decoration: none;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  outline: 0;
+  font-size: 12px;
+}
+.lform .register-form {
+  display: none;
+}
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.container:before, .container:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.container .info {
+  margin: 50px auto;
+  text-align: center;
+}
+.container .info h1 {
+  margin: 0 0 15px;
+  padding: 0;
+  font-size: 36px;
+  font-weight: 300;
+  color: #1a1a1a;
+}
+.container .info span {
+  color: #941919;
+  font-size: 12px;
+}
+.container .info span a {
+  color: #000000;
+  text-decoration: none;
+}
+.container .info span .fa {
+  color: #941919;
+}
+.admin {
+  color:#909090;
+  font-size:12px;
+  text-align:right;
+  padding-bottom:15px
+}
+body {
+  background: #983032; /* fallback for old browsers */
+  
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;      
+}
+
+
+h2 {
+	font-size: 15px;
+	line-height: 43px;
+	color: #333333;
+	font-weight: bold;
+	text-shadow: 0px 1px 1px #FFF;
+	background-image: url(q-top.png);
+	background-repeat: no-repeat;
+	background-position: center top;
+	height: 65px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 20px;
+	position: relative;
+	margin: 0px;
+}
+
+.clear {
+	clear: both;
+}
+
+.browsers {
+	position: absolute;
+	width: 120px;
+	top: 37px;
+	left: 150px;
+
+
+        }
+
+
+a.close {
+	position: absolute;
+	background-image: url(q-close.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	height: 58px;
+	width: 25px;
+	text-indent: -99999px;
+	outline: none;
+	top: 10px;
+	right: 10px;
+}
+
+.message {
+	display:block;
+	font-size: 11px;
+	margin-top: 15px;
+	margin-bottom: 10px;
+
+}
+
+
+#bg div {
+    height:200%;
+    left:-50%;
+    position:absolute;
+    top:-50%;
+    width:200%;
+}
+
+#bg td {
+    text-align:center;
+    vertical-align:middle;
+}
+
+bg img {
+    margin:0 auto;
+    min-height:50%;
+    min-width:50%;
+	background-repeat: repeat;
+}
+
+#cont {
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:70;
+	overflow:auto;
+}
+
+.lock {
+    width: 197px;
+    height: 198px;
+    padding: 0px;
+	background-image: url(lock.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	position: absolute;
+	left: 50%;
+	top: 50%;	
+	margin-left: -99px; 
+	/* Half the width of the DIV tag which is 50 pixels */
+	margin-top: -99px; 
+	/* Half the height of the DIV tag which is also 50 pixels */
+}
+
+.form {
+	display: none;
+
+}
+
+.show {
+	display: inline;
+}
+
+
+.formcont {
+	margin: 0px;
+	overflow: hidden;
+	position: relative;
+}
+.formfooter {
+	background-image: url(q-footer.png);
+	background-repeat: no-repeat;
+	background-position: center top;
+	margin: 0px;
+	padding: 0px;
+	height: 13px;
+}
+
+
+
+
+#signin_menu p.remember {
+	float: right;
+	clear: none;
+	padding:0;
+}
+#signin_menu a.forgot {
+	margin-top: 10px;
+	float: left;
+	display: inline;
+	line-height: 24px;
+	color: #666666;
+	text-decoration: none;
+/*	background-image: url(reset.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+	padding-left: 18px;
+	font-weight: bold;
+*/
+}
+
+.remember input {
+	height:22px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border:1px solid #B5B5B5;
+	color:#222;
+	text-shadow: 0px 1px 1px #FFF;
+	*filter: Shadow(Color=#FFFFFF, 	
+			Direction=180, 
+			Strength=1);
+	padding:4px 10px 5px;
+	font-size:11px;
+	margin: 0 0px 0 3px;
+	font-weight:bold;
+	line-height: 7px;
+}
+
+#signin_submit::-moz-focus-inner {
+padding:0;
+border:0;
+}
+#signin_submit:hover, #signin_submit:focus {
+	background-position:0 -5px;
+	cursor:pointer;
+}
+
+#focus-stealer      { position: absolute; left: -9999px; }
+
+
+/* copyright */
+
+#version {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #FFFFFF;
+	background-color: #CC0000;
+	text-align: center;
+	height: auto;
+	width: 200px;
+	font-weight: bold;
+	line-height: normal;
+	padding: 5px;
+	margin: 0px;
+	left: -50%;
+}
+#copyright {
+
+left=50%;
+	font-family: Arial, Helvetica, sans-serif;
+	background-color: #CC0000;
+	text-align: center;
+	width: 200px;
+	text-decoration: none;
+	top: 0px;
+	right: 0px;
+	padding-top: 0px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+}
+#copyright a {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+#inform {
+position:absolute;
+	background-color: #CC0000;
+	right:0px;
+	width:275px;
+	bottom: 0px;
+	float: right;
+	
+}
