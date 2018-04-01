@@ -1,0 +1,37 @@
+
+<div style="width: 22px; height: 24px; float: left; margin-top: 7px; margin-left: 5px">
+	<button class="bt-plus-gr" title="$_t._add" value="" onclick="javascript: 
+		^$('#middle-panel').css('visibility','visible');
+		^$.get('_admin_ajax/_add_idx.paj', {operations : 'addIdx'}, function(data) {^$('#middle-panel').html(data); });">
+		</button>
+</div>
+
+<div style="width: 22px; height: 24px; float: left; margin-top: 7px;">
+	<button class="bt-change-gr" title="$_t._change" value="" onclick="javascript: 
+		^$('#middle-panel').css('visibility','visible');
+		^$.get('_admin_ajax/_add_idx.paj', {operations : 'changeIdx', idx : '$cookie:idx'}, function(data) {^$('#middle-panel').html(data); });">
+		</button>
+</div>
+
+<div style="width: 22px; height: 24px; float: left; margin-top: 7px;">
+	<button class="bt-delete-gr" title="$_t._delete" value="" onclick="javascript: var returnto= 'returnto=administrators' ; 
+		^$.get('_admin_ajax/_add_idx.paj', {operations : 'deleteIdx'}, function(data) {^$('#middle-panel').html(data); });">
+		</button>
+</div>
+
+<div style="width: auto; height: 24px; float: right; margin-top: 5px; margin-right: 5px;">
+	<select name="select_idx" onchange="top.location.href = this.options[this.selectedIndex].value">
+	^connect[$CONNECT]{
+	$count_index[^table::sql{select * from ${BASE}structure where parent_id = 0 ORDER BY idx}]
+	$last_i[^string:sql{select MAX(position) from ${BASE}structure where parent_id =0}]
+	^count_index.sort{$count_index.position}
+#	^count_index.menu{$index_name[^table::sql{select * from ${BASE}content RIGHT JOIN ${BASE}structure ON ${BASE}content.id = ${BASE}structure.id WHERE ${BASE}content.id = $count_index.id}]
+	^count_index.menu{
+	
+	<option value="index.html?applet=menuadmin&idx=$count_index.idx" ^if($count_index.idx eq $form:idx){selected="selected"}>${count_index.langLink}: $count_index.name</option>}
+	}
+	</select>
+</div>
+
+
+

@@ -1,0 +1,21 @@
+^if(def $form:id){
+
+$id[^form:id.match[(node_)][g]{}]
+^connect[$CONNECT]{
+
+$vh(^string:sql{select active from ${BASE}structure where id = $id}[ $.default{$vh[0]} ] )
+
+$vh --
+
+^if($vh == 0){$vh(1);$vh(0)}
+$vh
+^void:sql{update ${BASE}structure set active = $vh where id = $id}
+
+}
+
+
+
+}
+$id - $vh
+
+

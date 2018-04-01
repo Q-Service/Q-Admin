@@ -1,0 +1,78 @@
+# Q-Service [2017]
+
+
+$id[1000]
+
+
+
+
+
+
+
+
+
+
+
+
+^connect[$CONNECT]{
+
+
+	^if(def $form:id){
+		^void:sql{UPDATE ${BASE}shop_set SET 
+			^form:fields.foreach[field;value]{$v[$value] 
+					$field = "$v" }[,] WHERE id = $id}
+	}
+
+
+
+
+$f[^table::sql{SHOW COLUMNS FROM ${BASE}shop_set LIKE 'n%'}]
+$fd[^table::sql{SHOW COLUMNS FROM ${BASE}shop LIKE 'f%'}]
+<div class="row" style="margin-top:30px"></div>
+<form role="form" method="POST" id="formx" action="javascript:void(null)^;">
+<input type="hidden" id="id" name="id" value="$id">
+^f.menu{
+$nf[$f.Field]
+$nd[f^f.Field.mid(1)]
+$tf[^fd.select($fd.Field eq "$nd")]
+
+$af[a^f.Field.mid(1)]
+$a[^table::sql{SELECT $nf, $af FROM ${BASE}shop_set WHERE id = "$id"}]
+
+<div class="col-xs-11">
+<div class="form-group">
+<label class="control-label">$nf [$tf.Type]</label>
+<input class="form-control" type="text" id="$nf" name="$nf" value="$a.$nf">
+</div>
+</div>
+<div class="col-xs-1">
+<div class="form-group">
+<label class="control-label">active</label>
+<input class="form-control" type="text" id="$af" name="$af" value="$a.$af">
+</div>
+</div>		
+
+
+
+}
+<div class="col-xs-12">
+<button id="submit_formx" type="submit" class="btn btn-default" onclick="javascript:
+var msg = jQuery('#formx').serialize()^;
+jQuery.ajax({
+type: 'POST',
+url: '/admin/_admin_ajax/__shop_card_admin.paj',
+data: msg,
+success: function(data) {
+jQuery('#middle-panel').html(data) ^;
+},
+error: function(xhr, str){
+alert('Виникла помилка: ' + xhr.responseCode)^;
+}
+})^;
+">Отправить
+</button>
+</div>
+</form>
+}
+
+

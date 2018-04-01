@@ -1,0 +1,302 @@
+# Q-Admin v.5.0 (20161223) !
+
+^if(def $form:xUID){$publication_type[$form:xUID]}{$publication_type[publication]}
+
+^if(def $form:UID){$uid[$form:UID]}{$uid[^math:uid64[]]}
+$cookie:uid[$uid]
+### new
+^if($form:action eq "new"){
+	$uid[^math:uid64[]]
+	$cookie:uid[$uid]
+}
+### remove
+^if($form:action eq "remove"){
+	^connect[$CONNECT]{
+		^void:sql{DELETE FROM ${BASE}publications WHERE id = "$form:id"}
+		$uid[^math:uid64[]]
+		$cookie:uid[$uid]
+	}
+	$fl[^file:list[/userfiles/publications/${form:UID}]]
+	^fl.menu{^if(-f "/userfiles/publications/${form:UID}/${fl.name}"){^file:delete[/userfiles/publications/${UID}/${fl.name}]}}
+}
+### remove_pic
+^if($form:action eq "remove_pic"){
+	^connect[$CONNECT]{
+		$apic[^string:sql{SELECT active_pic FROM ${BASE}publications WHERE UID = "$form:UID"}[$.limit(1) $.default[]]]
+		^if($apic eq $form:pic){
+		^void:sql{UPDATE ${BASE}publications SET active_pic = "" WHERE UID = "$form:UID"} 
+		}
+	}
+	^if(-f "/userfiles/publications/${form:UID}/${form:pic}"){^file:delete[/userfiles/publications/${form:UID}/${form:pic}]}
+}
+### active
+^if($form:action eq "active"){
+	^connect[$CONNECT]{
+	$a[^string:sql{select active from ${BASE}publications WHERE id = "$form:id"}[$.limit(1) $.default[0]]] 
+	^void:sql{UPDATE ${BASE}publications SET active ="^if($a eq '0'){1;0}" WHERE id = $form:id}
+	}
+
+}
+
+### active_pic
+^if($form:action eq "active_pic"){
+	^connect[$CONNECT]{
+	^void:sql{UPDATE ${BASE}publications SET active_pic = "$form:pic" WHERE UID = "$form:UID"}
+	}
+
+}
+^if($form:action ne "list"){
+
+	^if(def $form:f1v){ 
+		^connect[$CONNECT]{ 
+			$or[^string:sql{select id from ${BASE}publications WHERE id = "$form:id"}[$.limit(1) $.default[0]]] 
+				^if($or eq "0"){ 
+					^void:sql{INSERT INTO ${BASE}publications SET 
+						^form:fields.foreach[field;value]{ 
+							^switch[$field]{
+								^case[f1d]{$v[$value] $v[^v.match[,][g]{.}]$field = "$v"}
+								^case[date_1;date_2]{$v[$value] $v[^datatime_sql[$v;sql]] $field = "$v"}
+								^case[DEFAULT]{$field = "$value"}
+							}
+						
+							
+							}[,]}
+				}{
+					^void:sql{UPDATE ${BASE}publications SET 
+						^form:fields.foreach[field;value]{$v[$value] 
+						^if($field eq "f1d"){$v[$value] $v[^v.match[,][g]{.}]}
+						^if($field eq "date_1"){$v[$value] $v[^datatime_sql[$v;sql]]}
+						^if($field eq "date_2"){$v[$value] $v[^datatime_sql[$v;sql]]}
+						$field = "$v" }[,] WHERE id = $or}
+				}
+		}
+}
+
+^if($form:action eq "edit"){
+^connect[$CONNECT]{
+$pub[^table::sql{SELECT * FROM ${BASE}publications WHERE id = "$form:id"}]
+$idx[^table::sql{SELECT id, idx, name FROM ${BASE}structure WHERE procLink = "$publication_type"}]
+}
+}
+
+
+<script src="/admin/_includes/bootstrap/js/moment-with-locales.min.js"></script>
+<script src="/admin/_includes/bootstrap/js/bootstrap-datetimepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="/admin/_includes/bootstrap/css/bootstrap-datetimepicker.css"/>
+<script src="/admin/_includes/inserthtml.com.file-upload/javascript.js"></script>
+<link rel="stylesheet" href="/admin/_includes/inserthtml.com.file-upload/style.css">
+
+
+<script>
+jQuery(document).ready(allCompl)^;
+jQuery(document).ajaxComplete(allCompl)^;
+
+function allCompl(){
+	jQuery('button#submit_formx').unbind()^;
+	jQuery(function () {
+		jQuery('#deadline_applications').datetimepicker({
+			locale: 'uk',
+			format: 'DD.MM.YYYY HH:mm'
+			})^;
+	})^;
+	
+	jQuery(function () {
+		jQuery('#date_1').datetimepicker({
+			locale: 'uk',
+			format: 'DD.MM.YYYY HH:mm'
+		})^;
+	})^;
+
+#	jQuery(document).on("click", "#submit_formx", function(){
+		
+#	})
+	
+
+
+
+}
+</script>
+
+
+
+^connect[$CONNECT]{
+$idx[^table::sql{SELECT id, idx, name, fu FROM ${BASE}structure WHERE procLink = "$publication_type"}[$.limit[1]]]
+$links[^table::sql{SELECT id, name FROM ${BASE}structure WHERE idx = "1" AND id >= "1000"}]
+^links.sort{$links.id}[desc]
+}
+<div style="max-width:800px">
+<form role="form" method="POST" id="formx" action="javascript:void(null)^;">
+	<input id="UID" name="UID" type="hidden" value="$uid">
+	<input id="id" name="id" type="hidden" value="$form:id">
+    <input id="xUID" name="xUID" type="hidden" value="$publication_type">
+    <input id="path" name="path" type="hidden" value="/userfiles/publications">
+    
+    
+	<div class="col-xs-12"> 
+		<div class="form-group">
+			<label class="control-label" for="f1v">$_t._caption:</label>
+			<input class="form-control" id="f1v" name="f1v" type="text" value="$pub.f1v">
+		</div>
+	</div>
+	<div class="col-xs-6">
+
+    	<div class="form-group">
+        	<label class="control-label">$_t._link:</label>
+        	<select class="form-control" id="f2v" name="f2v">
+        	<option value="0" >Нет привязки</option>
+        	^links.menu{
+        		<option value="$links.id" ^if($pub.f2v eq "$links.id"){selected}>[$links.id] $links.name</option>
+        	}
+#        	 	<option value="$links.id" ^if($pub.f2v ne "0"){selected}>$idx.name</option>
+            	
+        	</select>
+    	</div>
+
+#endrem
+    </div>
+
+	<div class="col-xs-6">
+		<div class="form-group">
+			<label class="control-label">$_t._date:</label>
+			<div class='input-group date' id='date_1'>
+				<input type='text' class="form-control" id="date_1" name="date_1" value="^if($pub.date_1 ne ""){^datatime_sql[$pub.date_1;loc]}{^datenow_loc[]}">
+				<span class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+				</span>
+			</div>
+		</div>
+	</div>
+	<div class="col-xs-12">
+
+    <div class="form-group">
+        <label class="control-label">$_t._txt:</label>
+        <textarea class="form-control"  id="f1t" name="f1t">$pub.f1t</textarea>
+    </div>
+    <button id="submit_formx" type="submit" class="btn btn-default" onClick="javascript:
+		var msg   = jQuery('#formx').serialize()^;
+			jQuery.ajax({
+				type: 'POST',
+				url: '/admin/_admin_ajax/__publicadmin.paj',
+				data: msg,
+				success: function(data) {
+					jQuery('#middle-panel').html(data) ^;
+				},
+				error:  function(xhr, str){
+					alert('Виникла помилка: ' + xhr.responseCode)^;
+				}
+			})^;
+			jQuery.post('_admin_ajax/__publicadmin.paj', {'action' : 'list', 'UID' : '$form:UID', 'xUID' : '$form:xUID'}, function(data){
+				jQuery('#left-content').html(data) ^;	
+			})
+			">^if(def $form:id){$_t._update}{$_t._send}
+	</button>
+    
+</div>
+<div style="width:40%^; margin:15px^; float:left">
+
+
+
+### pictures cataloque
+#	<div class="img-gal"><hr></div>
+	^if(def $form:UID){
+	$pl[^file:list[/userfiles/publications/${form:UID};\.(jpg|JPG|png|PNG|gif|GIF)^$]]
+	^connect[$CONNECT]{$apic[^string:sql{SELECT active_pic FROM ${BASE}publications WHERE UID = "$cookie:uid"}[$.limit(1) $.default[0]]]}
+	^pl.menu{
+		
+		<div style="width:80px^; height:80px^; float:left^;margin:3px^;">
+			<div style="width:80px^; height:80px^; float:left^; overflow:hidden^">
+				<img style="width:160px^;height:auto^;text-align:center^;owerflow:hidden^;" src="/userfiles/publications/${form:UID}/${pl.name}">
+			</div>
+			<div style="width: 80px^;height: 17px^;position: relative^;margin: 63px 0 0 0^;background-color: rgba(255, 255, 255, 0.55)^;cursor: pointer^;" ></div>
+			<div style="width:14px^;height:13px^;position:relative^;margin:-16px 0 0 66px^;color:red^;cursor:pointer^;" class="glyphicon glyphicon-remove" 
+				onClick="javascript: 
+						if (confirm('Видалити?')) {
+							jQuery.post('_admin_ajax/__publicadmin.paj', {'UID' : '$cookie:uid', 'action' : 'remove_pic', 'pic' : '$pl.name', 'xUID' : '$form:xUID'}, function(data){
+							jQuery('#middle-panel').html(data) ^;	
+							})}">
+			</div>
+			<div style="width:14px^;height:13px^;position:relative^;margin:-16px 0 0 50px^;cursor:pointer^;" class="glyphicon glyphicon-ok ^if($apic eq $pl.name){check-noactive;check-active}"
+				onClick="javascript: 
+					jQuery.post('_admin_ajax/__publicadmin.paj', {'UID' : '$cookie:uid', 'action' : 'active_pic', 'pic' : '$pl.name', 'xUID' : '$form:xUID'}, function(data){
+					jQuery('#middle-panel').html(data) })">
+			</div>
+		</div>
+}
+
+}
+</form>
+<div id="results" style="margin:20px 0 20px"></div>
+<div id="pictures" style="margin:20px 0 20px"></div>
+<div id="drop-files" ondragover="return false">$_t._drag_im</div>
+<div id="uploaded-holder">
+	<div id="dropped-files">
+		<div id="upload-button"><a href="#" class="upload">$_t._upload</a><a href="#" class="delete">$_t._delete</a><span>0 Files</span></div>
+	</div>
+	<div id="extra-files">
+		<div class="number">0</div>
+		<div id="file-list"><ul></ul></div>
+	</div>
+</div>
+<div id="loading">
+	<div id="loading-bar">
+		<div class="loading-color"> </div>
+	</div>
+	<div id="loading-content">$_t._upload_file</div>
+</div>
+<div id="file-name-holder"  style="display: none^;"><ul id="uploaded-files"><h1>$_t._uploaded_files</h1></ul></div>
+}{
+
+
+
+
+##### list
+
+
+
+^connect[$CONNECT]{
+$pub[^table::sql{SELECT * FROM ${BASE}publications where xUID = "$publication_type"}]
+^pub.sort{$pub.date_1}[desc]
+}
+<table style="width:100%^; margin-top:15px^;">
+^pub.menu{	<tr id="$pub.UID" style="">
+				<td style="width:15px">&nbsp^;</td>
+				<td style="vertical-align:middle"><p style="margin: 10px 0^;"><b>$pub.id</b>/<b>$pub.date_1</b><br>&nbsp^;$pub.f1v</p></td>
+				<td style="width:15px">&nbsp^;</td>
+				<td style="width:20px"><a id="edit" style="cursor:pointer" 
+				onClick="javascript: 
+						jQuery.post('_admin_ajax/__publicadmin.paj', {'id' : '$pub.id', 'UID' : '$pub.UID', 'action' : 'edit', 'xUID' : '$form:xUID'}, function(data){
+							jQuery('tr').attr('style','')^; 
+							jQuery('tr#$pub.UID').attr('style','background-color:#C2E4FD')^; 
+							jQuery('#middle-panel').html(data) ^;	
+						})">
+				<span class="glyphicon glyphicon-pencil"></span></a>
+				</td>
+				<td style="width:20px"><a id="remove" style="cursor:pointer" 
+				onClick="javascript: 
+						if (confirm('${_t._delete}?')) {
+							jQuery.post('_admin_ajax/__publicadmin.paj', {'id' : '$pub.id', 'UID' : '$pub.UID', 'action' : 'remove', 'xUID' : '$form:xUID'}, function(data){
+							jQuery('#middle-panel').html(data) ^;	
+							})^;
+							jQuery.post('_admin_ajax/__publicadmin.paj', {'action' : 'list', 'UID' : '$form:UID', 'xUID' : '$form:xUID'}, function(data){
+							jQuery('#left-content').html(data) ^;	
+							})
+						
+						} else {
+							
+						}
+						"><span class="glyphicon glyphicon-remove"></span></a></td>
+				<td style="width:20px"><a id="active" style="cursor:pointer"
+				onClick="javascript: 
+						jQuery.post('_admin_ajax/__publicadmin.paj', {'id' : '$pub.id', 'UID' : '$pub.UID', 'action' : 'active', 'xUID' : '$form:xUID'}, function(data){
+						})^;
+						jQuery.post('_admin_ajax/__publicadmin.paj', {'action' : 'list', 'UID' : '$form:UID', 'xUID' : '$form:xUID'}, function(data){
+							jQuery('#left-content').html(data) ^;	
+						})"><span id="s-${pub.id}" class="glyphicon glyphicon-ok ^if($pub.active eq '1'){check-active;check-noactive}"></span></a></td>
+				<td style="width:15px">&nbsp^;</td>
+			</tr>}
+</table>
+
+}
+
+
+

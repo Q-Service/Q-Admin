@@ -1,0 +1,15 @@
+
+^if($form:user ne ""){
+^connect[$CONNECT]{
+$u[^string:sql{SELECT id FROM ${BASE}admins WHERE email = "$form:user"}[$.limit(1) $.default[no]]]
+^if($u eq "no"){$_t._no_matches_found}{
+$p[^password_generator_admin[6]]
+$p[^p.match[\W*][g]{}]
+$cr[^math:crypt[$p;^$apr1^$]]
+^void:sql{UPDATE ${BASE}admins SET pass = "$cr", temporary_password = "1" WHERE id = "$u"}
+$echo[${_t._temp_pass}:$p]
+^sender[NMAC;robot@zoneadmin.biz;$form:user;${_t._temp_pass};;$echo;]	
+&nbsp^;&nbsp^;$_t._temp_pass_send
+}
+}
+}{$form:user &nbsp^;&nbsp^;$_t._no_email}

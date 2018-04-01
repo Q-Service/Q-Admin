@@ -1,0 +1,223 @@
+^switch[$form:operations]{
+	^case[addIdx]{
+	^connect[$CONNECT]{
+		$lastIdx(^string:sql{SELECT MAX(idx) FROM ${BASE}structure }[$.limit(1)])
+		^lastIdx.inc[]
+		^if($form:name ne ""){
+		^void:sql{INSERT INTO ${BASE}structure SET 
+			parent_id="0", 
+			position="1", 
+			idx="$lastIdx", 
+			name="$form:name", 
+			langLink="$form:langLink", 
+			mStyle="$form:mStyle", 
+			plugLink="$form:plugLink", 
+			procLink="procLink", 
+			childMax="$form:childMax", 
+			rootMax="$form:rootMax"
+			}
+		$lastId[^string:sql{SELECT id FROM ${BASE}structure WHERE parent_id="0"AND position="1" AND idx="$lastIdx"}[$.limit(1)]]
+                ^void:sql{INSERT INTO ${BASE}content SET id="$lastId", data=""}
+		<script type="text/javascript"> 
+#                ^$.get('_admin_ajax/_idx_panel.paj', {operations : 'addPanel'}, function(data) {^$('#idx-panel').html(data)^; })^;
+		window.location.href="/admin/index.html?applet=menuadmin&idx=$lastIdx"^;
+		</script>
+
+		cookie !!!
+
+
+
+                }
+		
+	}
+
+
+
+
+	}
+	^case[deleteIdx]{
+                ^connect[$CONNECT]{
+			$idxCount(^string:sql{SELECT COUNT( * ) FROM  ${BASE}structure WHERE idx =  "$cookie:idx"}[$.default(0)])
+		$idxSet[^table::sql{SELECT * FROM ${BASE}structure WHERE idx="$cookie:idx" AND parent_id="0" AND position="1"}]
+			^if($idxCount > 1){
+		        <script type="text/javascript"> 
+				jAlert('Сначала необходимо удалить содержимое "${idxSet.name}"!', '$_t._del index?')^;
+			</script>
+			}{
+##########################			
+			$iidx[SELECT id FROM ${BASE}structure WHERE idx="$cookie:idx"]
+			^iidx.menu{^void:sql{DELETE  FROM ${BASE}content WHERE id="$iidx.id"}}
+#                       		 ^void:sql{DELETE  FROM ${BASE}content WHERE idx="$cookie:idx"}
+                        ^void:sql{DELETE  FROM ${BASE}structure WHERE idx="$cookie:idx"}
+        		<script type="text/javascript">window.location.href="/admin/index.html?applet=menuadmin&idx=1"</script>
+			}
+			
+		}
+
+
+
+	}
+	^case[changeIdx]{
+        ^connect[$CONNECT]{
+		$idxSet[^table::sql{SELECT * FROM ${BASE}structure WHERE idx="$cookie:idx" AND parent_id="0" AND position="1"}]
+
+		^if($form:name ne "" && $form:submit eq "submit"){ 
+			^void:sql{
+				UPDATE ${BASE}structure SET 
+				name="$form:name", 
+				langLink="$form:langLink", 
+				mStyle="$form:mStyle", 
+				plugLink="$form:plugLink", 
+				procLink="$form:procLink", 
+				childMax="$form:childMax", 
+				rootMax="$form:rootMax"
+				WHERE id="$idxSet.id"
+				}
+			^void:sql{UPDATE ${BASE}structure SET name="$form:name" WHERE id="$idxSet.id"}
+			<script type="text/javascript"> 
+#                ^$.get('_admin_ajax/_idx_panel.paj', {operations : 'addPanel'}, function(data) {^$('#idx-panel').html(data)^; })^;
+			window.location.href="/admin/index.html?applet=menuadmin&idx=$cookie:idx"^;
+			</script>
+		}
+		
+		$idxSet[^table::sql{SELECT * FROM ${BASE}structure WHERE idx="$cookie:idx" AND parent_id="0" AND position="1"}]
+		}
+
+
+	}
+
+}
+#end switch
+
+	^if($form:operations eq "addIdx" || $form:operations eq "changeIdx"){
+	<table class="tablesorter" width="100%" cellpadding="2" cellspacing="2" align="top" border="0">
+	<tr>
+	<td>
+	<form  id="add_idx" name="add_idx">
+		<table width="100%">
+		<tr>
+		<td align="left" valign="bottom">Название индекса (max 16 char):</td>
+		<td align="left" valign="bottom" width="50%"><input  class="form-control" name="name" type="text" id="name" style="width:100%" maxlength="16" value="$idxSet.name"/></td>
+		</tr>
+		<tr>
+		<td align="left" valign="bottom">Ассоциация с языком страницы:</td>
+		<td align="left" valign="bottom">
+			<select class="form-control" name="langLink" id="langLink"  style="width:100%">
+			<option value="ru" ^if($idxSet.langLink eq "ru"){selected="selected"}>Русский</option>
+			<option value="en" ^if($idxSet.langLink eq "en"){selected="selected"}>English</option>
+			<option value="su" ^if($idxSet.langLink eq "su"){selected="selected"}>Суржик</option>
+			<option value="uk" ^if($idxSet.langLink eq "uk"){selected="selected"}>Українська</option>
+			<option value="fr" ^if($idxSet.langLink eq "fr"){selected="selected"}>France</option>
+			</select>
+		</td>
+		</tr>
+		<tr>
+		<td align="left" valign="bottom">Стиль меню:</td>
+		<td align="left" valign="bottom">
+			<select  class="form-control" name="mStyle" id="mStyle"  style="width:100%">
+			<option value="0" ^if($idxSet.mStyle eq "0"){selected="selected"}>Основное меню</option>
+			<option value="1" ^if($idxSet.mStyle eq "1"){selected="selected"}>Вспомогательное меню</option>
+			<option value="2" ^if($idxSet.mStyle eq "2"){selected="selected"}>Верхнее меню</option>
+			<option value="3" ^if($idxSet.mStyle eq "3"){selected="selected"}>Нижнее меню</option>
+   	             <optgroup label="------------------------------------"></optgroup>
+			<option value="4" ^if($idxSet.mStyle eq "4"){selected="selected"}>Связать с дополнением</option>
+			<option value="5" ^if($idxSet.mStyle eq "5"){selected="selected"}>Другое</option>
+			</select>
+		</td>
+		</tr>
+		<tr>
+		<td align="left" valign="bottom">Связь с дополнением:</td>
+		<td align="left" valign="bottom">
+			<select  class="form-control" name="plugLink" id="plugLink"  style="width:100%">
+			<option value=""  ^if($idxSet.plugLink eq ""){selected="selected"}>Нет связи</option>
+			^connect[$CONNECT]{$catLink[^table::sql{SELECT * FROM ${BASE}structure WHERE plugLink="cataloque"}[$.limit(1)]]}
+			
+			^if(!def $catLink){
+				<option value="cataloque" ^if($idxSet.plugLink eq "cataloque"){selected="selected"}>Cataloque</option>
+			}{
+				^if($catLink.idx eq $cookie:idx){
+					<option value="cataloque" ^if($idxSet.plugLink eq "cataloque"){selected="selected"}>Cataloque</option>
+				}
+			
+			}
+
+			^if(!def $catLink){
+				<option value="shop" ^if($idxSet.plugLink eq "shop"){selected="selected"}>Shop</option>
+			}{
+				^if($catLink.idx eq $cookie:idx){
+					<option value="shop" ^if($idxSet.plugLink eq "shop"){selected="selected"}>Shop</option>
+				}
+			
+			}
+
+
+			</select>
+		</td>
+		</tr>
+		<tr>
+		<td align="left" valign="bottom">Связь с процедурой:</td>
+		<td align="left" valign="bottom"><input  class="form-control" type="text" name="procLink" id="procLink"  style="width:100%" value="$idxSet.procLink"/></td>
+		</tr>
+		<tr>
+		<td align="left" valign="bottom">Глубина вложений:</td>
+		<td align="left" valign="bottom"><input  class="form-control" type="text" name="childMax" id="childMax"  style="width:100%" value="$idxSet.childMax"/></td>
+		</tr>
+			<tr>
+		<td align="left" valign="bottom">Количество корневых элементов:</td>
+		<td align="left" valign="bottom"><input  class="form-control" type="text" name="rootMax" id="rootMax"  style="width:100%" value="$idxSet.rootMax"/></td>
+		</tr>	
+		</table>
+	</form>
+	</td>
+	</tr>
+	<tr>
+	<td>
+		<table width="100%" border="0" cellspacing="0" cellpadding="5">
+		<tr>
+		<td></td>
+		<td width="300" align="right" valign="bottom">
+						<button
+						style="border:none^; background-color:#fff" 
+						id="submit" value="$form:operations" 
+						class="button_pref" 
+						name="" 
+						value="^if($form:operations eq "addIdx"){$_t._add}{$_t._change}" 
+						onclick="javascript: 
+							^$('#right-panel').css('visibility','visible')^;
+							^$('#editor-panel').css('visibility','hidden')^; 
+							afv('add_idx')^;
+							return false^;
+							"><img src="_admin_img/16x16/^if($form:operations eq "addIdx"){add;change}.png"></button>
+	
+		</td>		
+
+		</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+	
+	
+	}
+
+
+<script>
+function afv( formname ) {
+	var elem = document.forms[ formname ].length ;
+		var str = '' ;
+                for (i=0^; i < elem ^; i++)  { 
+                var t = document.forms[ formname ].elements[ i ].value ;
+		if((document.forms[ formname ].elements[ i ].type == 'checkbox') || (document.forms[ formname ].elements[ i ].type == 'radio')){
+		                str += document.forms[ formname ].elements[ i ].name + '=' + document.forms[ formname ].elements[ i ].checked + '&' ; 
+				}
+			else
+				{
+				str += document.forms[ formname ].elements[ i ].name + '=' + document.forms[ formname ].elements[ i ].value + '&' ; 
+				};
+		};
+		str += "submit=submit&idx=$cookie:idx&operations=" + document.getElementById("submit").value ;
+		func = document.getElementById("submit").value ;
+		^$.get('/admin/_admin_ajax/_' + formname + '.paj', str, function(data) { ^$('#middle-panel').html(data); });
+};
+
+</script>

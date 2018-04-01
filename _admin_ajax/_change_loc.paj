@@ -1,0 +1,5 @@
+# admin localization
+^connect[$CONNECT]{
+^void:sql{UPDATE ${BASE}admin_set SET admin_lang = '$form:loc' WHERE id = '1000'}
+}
+$cookie:loc[$.value[$form:loc]]

@@ -1,0 +1,21 @@
+^connect[$CONNECT]{
+$cur[^string:sql{select pos from ${BASE}mainmenu where id = $form:id}]
+
+$thiscur[^cur.match[([0-9]+)^$][']]
+$cur[$thiscur.match]
+
+$prefix[$thiscur.prematch]
+$prefix[^prefix.left(^eval(^prefix.length[]-1))]
+
+
+
+^if($cur>1){
+
+$cur2($cur-1)
+
+
+^renamemenu[${prefix}a$cur2;777]
+^renamemenu[${prefix}a$cur;${prefix}a$cur2]
+^renamemenu[777;${prefix}a$cur]
+
+}}

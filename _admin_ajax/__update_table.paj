@@ -1,0 +1,5 @@
+^connect[$CONNECT]{
+^if(def $form:t && def $form:f && def $form:fv && def $form:id){
+^void:sql{UPDATE ${BASE}${form:t} SET ${form:f} = "${form:fv}" WHERE id = "${form:id}"}
+}
+}

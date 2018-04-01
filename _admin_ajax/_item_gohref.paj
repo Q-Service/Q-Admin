@@ -1,0 +1,37 @@
+^switch[$form:action]{
+
+^case[gethref]{ 
+			
+	^connect[$CONNECT]{     
+	$mhref[^string:sql{select href from ${BASE}structure where id = '$form:id'}[$.limit(1) $.default{}] ]
+	}
+#echo return data 
+$mhref
+
+}
+#end case gethref
+
+^case[gohref]{ 
+
+	^if(def $form:id && $form:gohref ne "null"){
+	$id[^form:id.match[(node_)][g]{}]
+
+	^connect[$CONNECT]{
+	^void:sql{ UPDATE ${BASE}structure SET href = '$form:gohref' WHERE id = '$id' }
+        	}
+
+	}
+
+#echo
+
+
+
+
+}
+#end case gohref
+
+}
+#end switch
+
+
+

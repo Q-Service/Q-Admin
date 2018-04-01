@@ -1,0 +1,263 @@
+# сделать проверку при удалении баннеров из привязки к id
+# обнулить banner_link in base pages
+#<link href="_admin_css/generator.css" rel="stylesheet" media="screen" /> 
+$id[^form:id.match[(node_)][]{}]
+$echo[]
+^connect[$CONNECT]{
+
+^if(def $form:weight){^bannerweiht[]} 
+^if(def $form:time){^bannertime[]}
+^if(def $form:banner_algoritm){^banner_algoritm[]}
+^if(def $form:bannerrotationtype){^bannerrotationtype[]}
+
+
+$content_link{^string:sql{select banner_link from ${BASE}structure where id='$id'}[$.limit(1) $.default{$content_link[0]}]}
+$banner_time{^string:sql{select banner_time from ${BASE}admin_set where id='1000'}[$.limit(1) $.default{$banner_time[10]}]}
+$banner_rt{^string:sql{select banner_rotation_type from ${BASE}admin_set where id='1000'}[$.limit(1) $.default{$banner_rt[0]}]}
+$banner_algoritm{^string:sql{select banner_algoritm from ${BASE}admin_set where id='1000'}[$.limit(1) $.default{$banner_algoritm[fade]}]}
+
+^switch[$form:type]{
+^case[add_banner]{
+# проверка двойников
+#$banners[^table::sql{select * from ${BASE}banners_idlink where img='$form:type'}]
+$banners[^table::sql{select * from ${BASE}banners_idlink where ((img='$form:name') && (id_link='$id'))}]
+
+
+^if(def $banners){$echo[Баннер с таким именем уже выбран]}{
+^void:sql{insert into ${BASE}banners_idlink set img='$form:name', id_link='$id', active='1'}
+^void:sql{update ${BASE}structure set banner_link='1' where id='$id'}
+}            
+} 
+#endcase add_banner
+^case[del_banner]{
+^void:sql{DELETE FROM ${BASE}banners_idlink WHERE img='$form:name' AND id_link='$id'}
+} 
+#endcase del_banner
+} 
+#endswitch
+
+
+$banners[^table::sql{select * from ${BASE}banners where id='$id'}]
+# Поля: id  caption  dir  img  weight  active  ref  
+
+$bannerlist[^file:list[/banners]]
+
+<body>
+<table width="800" border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td height="20" align="center" valign="middle" ^if($echo ne ""){bgcolor="#CC0033";bgcolor=""} ><span style="color: #FFFFFF^; font-weight: bold^;">$echo</span></td>
+</tr>
+</table>
+
+<table width="800" border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td width="250" rowspan="2" align="left" valign="top">
+	<table width="250" border="0" cellpadding="2">
+	<tr>
+	<td align="left" valign="top"> 
+#	$bannerstype[^table::sql{select * from ${BASE}banners}]
+	$bannerstype[^file:list[/_PRW/userfiles/banners/]]	
+#	^bannerstype.sort{$bannerstype.img}
+	<div>
+	<div id="banners-fund" style="clear: left^; height: 600px^; width: 270px^; overflow: scroll^;">
+#	^bannerstype.menu{<img class="banner-fund" id="${bannerstype.id}" alt="${bannerstype.img}" src="/_PRW/userfiles/banners/${bannerstype.img}" />
+	^bannerstype.menu{<img class="banner-fund" id="${bannerstype.name}" alt="${bannerstype.name}" src="/_PRW/userfiles/banners/${bannerstype.name}" />
+	}
+	</div>
+	</td>
+	</tr>
+	</table>
+</td>
+<td width="10" align="left" valign="bottom">&nbsp^;</td>
+<td align="left" valign="top">
+	<table width="100%" border="0" cellpadding="2" cellspacing="0">
+	<tr>
+	<td width="268" height="80" align="center" valign="middle">
+		<table width="100%" height="100%" border="0" cellspacing="0" cellpadding="2">
+		<tr>
+		<td align="center" valign="middle" bgcolor="#FFFFFF">^if(${form:type} eq "add_banner"){<img src="/_PRW/userfiles/banners/${form:name}" alt=""  border="0"  />}{}</td>
+		</tr>
+		</table>
+	</td>
+	<td align="right" valign="top">
+		<table class="attention" width="100%" border="0" cellpadding="2" cellspacing="0">
+		<tr height="80">
+		<td><div align="justify" style="margin:3px">! $_t._banner_alert</div></td>
+		</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+</td>
+</tr>
+<tr>
+<td width="10" align="left" valign="top">&nbsp^;</td>
+<td align="left" valign="top">
+	<table width="100%" border="0" cellpadding="2" cellspacing="0">
+	<tr>
+	<td width="264" height="60" align="left" valign="top">
+	<form id="form5" name="form5" method="post" action="">
+		<table width="100%">
+		<tr>
+		<td align="right" valign="middle">$_t._time_change (sec.):</td>
+		<td width="100"><select name="time" class="admin_select" id="time" 
+		onchange="^$.get('/admin/_admin_ajax/_banner_ref.paj',
+				{id:'$id', banner_id:'$banners_idlink.id', time: this.options[this.selectedIndex].value}, 
+				function(data){^$('#right-panel').html(data)}
+				)^;">
+		$w[$banner_time]
+		$w_num(4)
+		^while($w_num < 22){
+		<option value=^w_num.format[%02.0f] ^if(^w_num.format[%02.0f] eq ^w.format[%02.0f]){selected}>^w_num.format[%02.0f]</option>
+		^w_num.inc(2)
+		}
+
+		</select>
+		</td>	
+		</tr>
+		<tr>
+		<td align="right" valign="middle">${_t._algoritm}:</td>
+	        <td>
+		<select name="banner_algoritm" class="admin_select" id="banner_algoritm"
+		onchange="^$.get('/admin/_admin_ajax/_banner_ref.paj',
+				{id:'$id', banner_id:'$banners_idlink.id', banner_algoritm: this.options[this.selectedIndex].value}, 
+				function(data){^$('#right-panel').html(data)}
+				)^;">
+	<option ^if($banner_algoritm eq blindX){selected}>blindX</option>
+	<option ^if($banner_algoritm eq blindY){selected}>blindY</option>
+	<option ^if($banner_algoritm eq blindZ){selected}>blindZ</option>
+	<option ^if($banner_algoritm eq cover){selected}>cover</option>
+	<option ^if($banner_algoritm eq curtainX){selected}>curtainX</option>
+	<option ^if($banner_algoritm eq curtainY){selected}>curtainY</option>
+	<option ^if($banner_algoritm eq fade){selected}>fade</option>
+	<option ^if($banner_algoritm eq fadeZoom){selected}>fadeZoom</option>
+	<option ^if($banner_algoritm eq growX){selected}>growX</option>
+	<option ^if($banner_algoritm eq growY){selected}>growY</option>
+	<option ^if($banner_algoritm eq scrollUp){selected}>scrollUp</option>
+	<option ^if($banner_algoritm eq scrollDown){selected}>scrollDown</option>
+	<option ^if($banner_algoritm eq scrollLeft){selected}>scrollLeft</option>
+	<option ^if($banner_algoritm eq scrollRight){selected}>scrollRight</option>
+	<option ^if($banner_algoritm eq scrollHorz){selected}>scrollHorz</option>
+	<option ^if($banner_algoritm eq scrollVert){selected}>scrollVert</option>
+	<option ^if($banner_algoritm eq shuffle){selected}>shuffle</option>
+	<option ^if($banner_algoritm eq slideX){selected}>slideX</option>
+	<option ^if($banner_algoritm eq slideY){selected}>slideY</option>
+	<option ^if($banner_algoritm eq toss){selected}>toss</option>
+	<option ^if($banner_algoritm eq turnUp){selected}>turnUp</option>
+	<option ^if($banner_algoritm eq turnDown){selected}>turnDown</option>
+	<option ^if($banner_algoritm eq turnLeft){selected}>turnLeft</option>
+	<option ^if($banner_algoritm eq turnRight){selected}>turnRight</option>
+	<option ^if($banner_algoritm eq uncover){selected}>uncover</option>
+	<option ^if($banner_algoritm eq wipe){selected}>wipe</option>
+	<option ^if($banner_algoritm eq zoom){selected}>zoom</option>
+	<option ^if($banner_algoritm eq random){selected}>random</option>
+		</select>		</td>
+		</tr>
+		</table>
+	</form>	</td>
+	<td width="272" align="left" valign="middlep">
+	<form id="form3" name="form3" method="post" action="">
+	        <table width="100%">
+		<tr>
+		<td width="30" align="center" valign="middle">
+		<input type="radio" name="radio" value="0" ^if($banner_rt eq 0){checked="checked"} 
+		onchange="^$.get('/admin/_admin_ajax/_banner_ref.paj',
+				{id:'$id', banner_id:'$id', bannerrotationtype: this.value,}, 
+				function(data){^$('#right-panel').html(data)}
+				)^;">
+		</td>
+
+	        <td>$_t._rotation_time</td>
+		</tr>
+		<tr>
+		<td align="center" valign="middle">
+		<input type="radio" name="radio"  value="1" ^if($banner_rt eq 1){checked="checked"} 
+		onchange="^$.get('/admin/_admin_ajax/_banner_ref.paj',
+			{id:'$id', banner_id:'$id', bannerrotationtype: this.value,}, 
+			function(data){^$('#right-panel').html(data)}
+			)^;">
+
+		</td>
+		<td>$_t._rotation_refresh </td>
+		</tr>
+		</table>
+	</form>	
+	</td>
+	</tr>
+	<tr>
+	<td height="64" colspan="2" align="left" valign="top">
+	<form id="form55" name="form55" method="post" action="">
+	<!-- Таблица активных баннеров -->
+		<table  id="ban" width="100%" border="0" cellspacing="2" cellpadding="0"  class="thinborder">
+		<tr>
+		<th width="1"></th>
+		<th align="center" valign="middle">${_t._capture}:</th>
+		<th width="240" align="center" valign="middle">${_t._selected_banners}: </th>
+		<th></th>
+		<th width="1"></th>
+		</tr>
+$banners_idlink[^table::sql{select * from ${BASE}banners_idlink where id_link='$id' ORDER BY weight}]
+# Поля: id  id_link  caption  dir  img  weight  active  ref  
+			$i(1)
+			^banners_idlink.menu{
+		<tr id="$i" height="70" >
+^void:sql{UPDATE ${BASE}banners_idlink SET weight="$i" WHERE id="$banners_idlink.id"}
+
+		<td>$i<input name="banner_id" type="hidden"  value=$banners_idlink.id></td>
+		<td height="" align="center" valign="middle"><input name="caption" type="text" class="admin_input_100" id="textfield" value="$banners_idlink.caption" onblur="window.open('action.html?adminaction=bannercaption&id=$id&banner_id=$banners_idlink.id&caption=' + this.value, '$banners.id', 'width=0,height=0')"></td>
+		<td align="center" valign="middle" background="${banners_idlink.dir}_prw/_${banners_idlink.img}"></td>
+		<td width="20" align="center"><a rel="${banners_idlink.img}" class="delete_x"> X</td>
+		<td></td>
+		</tr>^i.inc[]
+		}
+		</table>
+	</form>
+	</td>
+	</tr>
+	</table>
+</td>
+</tr>
+</table>
+
+}
+#endconnect
+<script src="/admin/_admin_js/tablednd.js" type="text/javascript"></script>
+<script type="text/javascript">
+^$('.banner-fund').click(function() {
+	^$.ajax({
+	url:	'/admin/_admin_ajax/_banner_ref.paj',
+	type:	'POST',
+#	contentType: 'application/x-www-form-urlencoded', //Тип передаваемых данных
+	data:	{ type : 'add_banner', id : $id, banner_id : this.id , name : this.alt },
+	success: function(response){
+	^$('#right-panel').html(response)^;
+#	alert('Данные отправлены! Сервер вернул ответ: ' + response);
+#	^$.get('_server.paj', { type : 'list', idx : '$cookie:idx' }, function () { ^$('#tree-panel .tree').jstree('refresh',-1); })^;
+			}
+	})^;
+})^;
+
+^$('a.delete_x').click(function() {
+	alert(this.rel +"- $id"+ this.id)^;
+	^$.ajax({
+	url:	'/admin/_admin_ajax/_banner_ref.paj',
+	type:	'POST',
+	contentType: 'application/x-www-form-urlencoded', //Тип передаваемых данных
+	data:	{ type : 'del_banner', id : $id, banner_id : this.id , name : this.rel },
+	success: function(response){
+	^$('#right-panel').html(response)^; alert(data)^;
+			}
+	})^;
+})^;
+
+^$('#ban').tableDnD({
+        onDrop: function(table, row) {
+	var values = ^$.tableDnD.serialize() +'&id=$id'^;
+	^$.get('/admin/_admin_ajax/_banner_weight.paj', values, function(){})^;
+#            alert(^$.tableDnD.serialize())^;
+        }
+    })^;
+</script>
+
+
+

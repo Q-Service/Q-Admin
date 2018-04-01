@@ -1,0 +1,13 @@
+^if(def $form:id){
+$id[^form:id.match[(node_)][g]{}]
+^connect[$CONNECT]{
+$admins[^table::sql{select * from ${BASE}admins}]
+
+$q(^string:sql{select q from ${BASE}structure where id = '$id'}[$.limit(1) $.default{$cont(0)}] )
+^if($q == 1){$c(0)}{$c(1)}
+^if($admins.active eq 9){
+^void:sql{ UPDATE ${BASE}structure SET q = '$c' WHERE id = '$id' }
+}
+}
+}
+${form:id}-${q}-$c

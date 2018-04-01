@@ -1,0 +1,172 @@
+^switch[$form:op]{
+
+	^case[add]{
+	
+
+				^connect[$CONNECT]{
+							^void:sql{	
+							INSERT INTO ${BASE}users SET
+							name="$form:name",
+							login="$form:login",
+							passw="$form:passw",
+							email="$form:email",
+							phone="$form:phone",
+							address="$form:address"
+							}
+				}
+
+		}
+
+	
+	^case[change]{
+				^connect[$CONNECT]{
+							^void:sql{	INSERT INTO ${BASE}users SET
+							name="$form:name",
+							login="$form:login",
+							passw="$form:passw",
+							email="$form:email",
+							phone="$form:phone",
+							address="$form:address"
+							WHERE id="$form:uid"
+							}
+				}
+	}
+
+	
+	^case[left]{
+				
+		^connect[$CONNECT]{		
+		$users[^table::sql{select * from ${BASEBOSS}users}]
+		^if(def $form:uid){
+			$curusers[^table::sql{select * from ${BASE}users where id=$form:uid}]
+		}		
+		}		
+		<form id="pref">		
+		<table width="240" border="0" valign=top>
+		<input type=hidden name="uid" value="$form:uid">
+		<tr>
+		<td valign=top>$_t._choice:<br>
+		<select id="uselect" style="width:100%">
+		<option value="">$_t._new</option>
+		^users.menu{
+		<option value="$users.id" ^if($form:uid eq $users.id){selected}>$users.name</option>
+		}
+		</select>
+		</td>
+		</tr>
+		<tr>
+		<td>$_t._user_name:<br><input style="width:100%" type="text" name="name" value="$curusers.name" size="20" maxlength="25"></td>
+		</tr>
+		<tr>
+		<td>$_t._login:<br><input style="width:100%" type="text" name="login" value="$curusers.login" size="20" maxlength="25"></td>
+		</tr>
+		<tr>
+		<td>$_t._pass:<br><input style="width:100%" type="password" name="passw" value="$curusers.passw" size="20" maxlength="25"></td>
+		</tr>
+		<tr>
+		<td>E-mail:<br><input style="width:100%" type="text" name="email" value="$curusers.email" size="20" maxlength="25"></td>
+		</tr>
+		<tr>
+		<td>Phone:<br><input style="width:100%" type="text" name="phone" value="$curusers.phone" size="20" maxlength="25"></td>
+		</tr>
+		<tr>
+		<td>Address:<br><input style="width:100%" type="text" name="address" value="$curusers.address" size="20" maxlength="25"></td>
+		</tr>
+		<tr>
+# add/change		
+		<td width="30" align="right" valign="middle">
+			<button class="button_pref" style="border:none^; background-color:#fff" name="^if(def $form:uid){change;add}" value="" ">
+			<img  src="_admin_img/16x16/^if(def $form:uid){change;plus}.png"></button>
+		</td>
+		</tr>
+		</table>
+		</form>
+		
+		<script>
+		jQuery('#uselect').change(function(){ 
+			var id = this.value ^;
+			if( jQuery('#uselect').val() == "" ){ var id = "" }^;
+			jQuery.post('_admin_ajax/_siteUsers.paj', {uid: id, op:'left'}, function(data){ jQuery('#left-content').html(data) }) ^;
+		}) ^;
+		jQuery('.button_pref').click(function(){ 
+			f=jQuery('form').serialize() +'&op=' + this.name ^;
+			alert(f) ^;
+			jQuery.get('_admin_ajax/_siteUsers.paj', f, function(data){ jQuery('#left-content').html(data) }) ^;		
+		})^;
+		
+		
+		</script>
+	}
+				
+				
+	^case[middle]{
+					
+					$userscount[1]
+					$tablename[$hosting]
+					^connect[$CONNECT]{		
+						$users[^table::sql{select * from ${BASEBOSS}users}]
+					}
+						$countusers(^users.count[])
+						^users.sort{$users.name}[asc]
+				
+					<table class="tablesorter" width="100%" border="0" align="left" valign="top" cellpadding="0" cellspacing="1">
+					<thead>
+					<tr height="30">
+					<th></th><th>Ф.И.О.</th><th>Login</th><th>E-mail</th><th>Телефон</th><th>Адрес</th><th>Дата регистрации</th><th></th>
+					</tr>
+					</thead>
+					<tbody>
+					^users.menu{
+					<tr height="30">
+					
+					<td width="24">
+						<button class="button-pref" 
+						title="^if($users.active eq 0){${_t._activate}}{$_t._desactivate}"
+						onClick="javascript: 
+						var f= 'id=${admins.id}&op=active'^; 
+						jQuery.get('_admin_ajax/_a.paj', f, function(data) {
+						jQuery.get('_admin_ajax/_a.paj', function(data) { jQuery('#middle-panel').html(data) })
+						})^;"
+						>
+						<img src="_admin_img/16x16/^if($admins.active eq 1){active.png}{unactive.png}">
+						</button>
+					</td>
+					<td>${users.name}</td>
+					</td>
+					<td>${users.login}</td>
+					<td>${users.email}</td>
+					<td>${users.phone}</td>
+					<td>${users.address}</td>
+					<td>${users.date}</td>
+					<td width="24">
+						<button class="bt-delete" title="$_t._delete" value="${dir}/${ffdir.name}" 
+						onClick="javascript: 
+						jConfirm('Can you confirm this?', 'Confirmation Dialog', function(r) {
+						if( r == true ){ 
+						var f = 'id=${admins.id}&op=delete'^; 
+							jQuery.post('_admin_ajax/_a.paj', f,  function() {
+							jQuery.post('_admin_ajax/_a.paj', f,  function(data) { jQuery('#middle-panel').html(data) })
+							})^;
+			    		}	
+						})">
+					</button>
+					</td>
+					</tr>
+					<tr>
+										}
+					</tbody>					
+					</table>
+		
+
+				
+				
+				
+	}
+			
+			
+			
+
+	
+
+}
+#end if

@@ -1,0 +1,465 @@
+<script src="/admin/_includes/bootstrap/js/moment-with-locales.min.js"></script>
+<script src="/admin/_includes/bootstrap/js/bootstrap-datetimepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="/manager/_includes/bootstrap/css/bootstrap-datetimepicker.css"/>
+<script>
+jQuery(document).ready(allCompl)^;
+jQuery(document).ajaxComplete(allCompl)^;
+
+function allCompl(){
+	jQuery('button#submit').unbind()^;
+	jQuery(function () {
+		jQuery('#nd01').datetimepicker({
+			locale: 'ru',
+			format: 'YYYY-MM-DD'
+			})^;
+	})^;
+	
+	jQuery(function () {
+		jQuery('#nd02').datetimepicker({
+			locale: 'ru',
+			format: 'YYYY-MM-DD'
+		})^;
+	})^;
+
+}
+</script>
+
+^if($form:action eq "start_pub"){
+$uid[^math:uid64[]]
+$cookie:uid[$uid]
+$action[new]
+}
+
+^if(!def $form:id || $form:id eq ""){$action[new];$action[update]}
+
+^connect[$CONNECT]{
+### Тип поля карты
+$fd[^table::sql{SHOW COLUMNS FROM ${BASE}shop LIKE 'f%'}]
+$nd[f^card_fields_name.f.mid(1)]
+$tf[^fd.select($fd.Field eq "$nd")]
+$ftype[^tf.Type.match[\w*][']]
+### $ftype.match содержит тип поля!
+}
+
+### new
+^if($form:action eq "new" || ($form:action eq "update" && !def $form:id) || ($form:action eq "update" && $form:id eq "")){
+	^connect[$CONNECT]{
+		^void:sql{INSERT INTO ${BASE}shop SET 
+			^form:fields.foreach[field;value]{ 
+														
+				^if($form:$field is file){
+					$v[${form:$field.name}]
+					$e[^file:justext[${form:$field.name}]]
+					^form:$field.save[binary;/userfiles/shop/$uid/${field}.^e.lower[]] 
+				}{
+					$v[$value]
+				}
+				^if($ftype.match eq "decimal"){
+									$v[^v.match[,][g]{.}] 
+									$v[^v.match[\s][g]{}]
+				}
+				
+				^if($ftype.match eq "datetime"){
+					$v[^datatime_sql[$v;sql]]
+				}
+
+				^if($ftype.match eq "date"){
+					$v[^date_sql[$v;sql]]
+				}
+			$field = "$v"}[,]
+		}
+
+		$pes[^string:sql{SELECT id FROM ${BASE}shop WHERE uid = "$form:uid" AND sub = "$form:sub"}[$.limit[1] $.default[0]]]
+#		$pub[^table::sql{SELECT * FROM ${BASE}shop WHERE id = "$pes"}]
+#		$cookie:uid[$form:uid]
+#		$action[update]
+	}
+}
+### update
+^if($form:action eq "update"){
+	^connect[$CONNECT]{
+		^void:sql{UPDATE ${BASE}shop SET 
+			^form:fields.foreach[field;value]{ 
+														
+				^if($form:$field is file){
+					$v[${form:$field.name}]
+					$e[^file:justext[${form:$field.name}]]
+					^form:$field.save[binary;/userfiles/shop/$uid/${field}.^e.lower[]] 
+				}{
+					$v[$value]
+				}
+				^if($ftype.match eq "decimal"){
+									$v[^v.match[,][g]{.}] 
+									$v[^v.match[\s][g]{}]
+				}
+				
+				^if($ftype.match eq "datetime"){
+					$v[^datatime_sql[$v;sql]]
+				}
+
+				^if($ftype.match eq "date"){
+					$v[^date_sql[$v;sql]]
+				}
+			$field = "$v" }[,] WHERE id = "$form:id"
+		}
+
+		$pes[^string:sql{SELECT id FROM ${BASE}shop WHERE uid = "$form:uid" AND sub = "$form:sub"}[$.limit[1] $.default[0]]]
+		$pub[^table::sql{SELECT * FROM ${BASE}shop WHERE id = "$pes"}]
+		$action[update]
+		$cookie:uid[$form:uid]
+	}
+	
+}
+### edit_sub
+^if($form:action eq "edit_sub"){ 
+	^connect[$CONNECT]{
+	$pes[^string:sql{SELECT id FROM ${BASE}shop WHERE uid = "$form:uid" AND sub = "$form:sub"}[$.limit[1] $.default[0]]]
+	^if($pes ne "0"){
+		$pub[^table::sql{SELECT * FROM ${BASE}shop WHERE id = "$pes"}]
+	}
+	$action[update]
+	$cookie:uid[$form:uid]
+	}
+}
+### edit
+^if($form:action eq "edit"){
+	^connect[$CONNECT]{
+	
+	$pe[^string:sql{SELECT uid FROM ${BASE}shop WHERE id = "$form:id"}[$.limit[1] $.default[0]]]
+	$pub[^table::sql{SELECT * FROM ${BASE}shop WHERE id = "$form:id"}]
+	$action[update]
+	$cookie:uid[$form:uid]
+	}
+}
+
+### remove
+^if($form:action eq "remove"){
+	^connect[$CONNECT]{
+		$pr[^string:sql{SELECT uid FROM ${BASE}shop WHERE id = "$form:id"}[$.limit[1] $.default[0]]]
+		^for[i](0;11){
+			$fr[^file:list[/userfiles/shop/${form:uid}_$i]]
+			^if(^fr.count[] > 0){
+				^fr.menu{
+					^if(-f "/userfiles/shop/${pr}_${i}/$fr.name"){^file:delete[/userfiles/shop/${pr}_${i}/$fr.name]}
+				}
+				^if(-d "/userfiles/shop/${pr}_$i"){^file:delete[/userfiles/shop/${pr}_$i]}
+			}
+		}
+		^void:sql{DELETE FROM ${BASE}shop WHERE uid = "$form:uid"}
+		$uid[^math:uid64[]]
+		$cookie:uid[$uid]
+	}
+}
+
+
+### remove_pic
+^if($form:action eq "remove_pic"){
+	^connect[$CONNECT]{
+		$apic[^string:sql{SELECT active_pic FROM ${BASE}shop WHERE id = "$form:id"}[$.limit(1) $.default[]]]
+		^if($apic eq $form:pic){
+			^void:sql{UPDATE ${BASE}shop SET active_pic = "" WHERE id = "$form:id"}
+			$ftid[^string:sql{SELECT id FROM ${BASE}filetext WHERE path = "/userfiles/shop/${cookie:uid}/${form:pic}"}[$.limit(1) $.default[0]]]
+			^if($ftid ne "0"){
+				^void:sql{DELETE FROM ${BASE}filetext WHERE id = "$ftid"}
+			}
+		}
+		$pe[^string:sql{SELECT uid FROM ${BASE}shop WHERE id = "$form:id"}[$.limit[1] $.default[0]]]
+		$pub[^table::sql{SELECT * FROM ${BASE}shop WHERE id = "$form:id"}]
+		$action[edit] 
+		$cookie:uid[$form:uid]
+		
+	}
+	^if(-f "/userfiles/shop/${form:uid}/${form:pic}"){^file:delete[/userfiles/shop/${form:uid}/${form:pic}]}
+}
+### active
+^if($form:action eq "active"){
+	^connect[$CONNECT]{
+	$a[^string:sql{select active from ${BASE}shop WHERE id = "$form:id"}[$.limit(1) $.default[0]]] 
+	^void:sql{UPDATE ${BASE}shop SET active ="^if($a eq '0'){1;0}" WHERE id = "$form:id"}
+	$pe[^string:sql{SELECT uid FROM ${BASE}shop WHERE id = "$form:id"}[$.limit[1] $.default[0]]]
+
+	$pub[^table::sql{SELECT * FROM ${BASE}shop WHERE id = "$form:id"}]
+	$action[edit]
+	$cookie:uid[$form:uid]
+	}
+
+}
+
+### active_pic
+^if($form:action eq "active_pic"){
+	^connect[$CONNECT]{
+	^void:sql{UPDATE ${BASE}shop SET active_pic = "$form:pic" WHERE id = "$form:id"}
+	$pe[^string:sql{SELECT uid FROM ${BASE}shop WHERE id = "$form:id"}[$.limit[1] $.default[0]]]
+
+	$pub[^table::sql{SELECT * FROM ${BASE}shop WHERE id = "$form:id"}]
+	$action[edit]
+	$cookie:uid[$form:uid]
+	}
+
+}
+
+
+^if($form:action ne "list"){
+
+<script src="/admin/_includes/bootstrap/js/moment-with-locales.min.js"></script>
+<script src="/admin/_includes/bootstrap/js/bootstrap-datetimepicker.js"></script>
+
+<script src="/admin/_includes/inserthtml.com.file-upload/javascript.js"></script>
+<link rel="stylesheet" href="/admin/_includes/inserthtml.com.file-upload/style.css">
+<link rel="stylesheet" href="/admin/_includes/inserthtml.com.file-upload/pacifico.css">
+
+
+
+<style>label{margin-top:10px^;}</style>
+
+^connect[$CONNECT]{
+### Поля карты товара
+$t[^table::sql{SELECT * FROM ${BASE}shop_set WHERE level = "shop"}]
+### Ищем магазин
+$shop_idx[^string:sql{SELECT idx FROM ${BASE}structure WHERE plugLink = "shop"}]
+### Меню магазина
+$vol[^table::sql{SELECT id, name FROM ${BASE}structure WHERE idx = "$shop_idx" AND active = "1" AND parent_id > "0"}]
+^vol.sort{$vol.name}
+### Поля карты товаров
+$card_fields[^table::sql{SELECT * FROM ${BASE}shop_set WHERE level = "shop"}]
+### Сортируем порядок вывода
+#^card_fields.sort{$card_fields}
+^card_fields.save[/zzz_card_fields.txt]
+$card_fields_hash[$card_fields.fields]
+#^card_fields_hash.save[/zzz_card_fields_hash.txt]
+$card_fields_table[^table::create{f^#09v^#0A^card_fields_hash.foreach[key;value]{$key^#09$value^#0A}}]
+^card_fields_table.save[/zzz_card_fields_table.txt]
+$card_fields_name[^card_fields_table.select(^card_fields_table.f.left(1) eq "n" && $card_fields_table.v ne "")]
+$card_fields_pos[[^card_fields_table.select(^card_fields_table.f.left(1) eq "a")]]
+^card_fields_name.save[/zzz_card_fields_name.txt]
+### сводная таблица с позицией
+$card_fields_name_pos[^table::create{f^#09v^#09p^#0A^card_fields_name.menu{$card_fields_name.f^#09$card_fields_name.v^#09$suff[^card_fields_name.f.mid(1)]$tpos[^card_fields_pos.select($card_fields_pos.f eq "a$suff")]$tpos.v^#0A}}]
+^card_fields_name_pos.sort{$card_fields_name_pos.p}
+^card_fields_name_pos.save[/zzz_card_fields_name_pos.txt]
+
+### Тип поля карты
+$fd[^table::sql{SHOW COLUMNS FROM ${BASE}shop LIKE 'f%'}]
+
+
+}
+$id[^if($pub.id ne ""){$pub.id;$form:id}]        
+
+		<div class="row" style="margin:20px 0">
+			<div class="col-md-6">
+				<form role="form" method="POST" id="formx" action="javascript:void(null)^;">
+					<br />Уникальный идентификатор публикации: <b>$cookie:uid</b><br />
+					<div>
+						<input name="id" type="hidden" value="$id">
+						<input name="uid" type="hidden" value="$cookie:uid">
+						<input name="path" type="hidden" value="/userfiles/shop">
+						<input name="action" type="hidden" value="$action">
+						<input name="ajaxpath" type="hidden" value="/admin/_admin_ajax/__shop.paj?id=$id&uid=$cookie:uid&action=edit">
+					</div>
+					<label class="control-label"></label>
+					<select  class="form-control" name="sub" >
+						^vol.menu{
+							<option value="$vol.id" ^if($pub.sub eq "$vol.id"){selected}>$vol.name</option>
+						}
+					</select>
+					 
+					^card_fields_name_pos.menu{
+						$nd[f^card_fields_name_pos.f.mid(1)]
+						$tf[^fd.select($fd.Field eq "$nd")]
+						$ftype[^tf.Type.match[\w*][']]
+						$fname[f^card_fields_name_pos.f.mid(1)]
+
+						^switch[$ftype.match]{
+							
+							^case[text]{
+								<label class="control-label" id="$fname">$card_fields_name_pos.v:</label>
+								<textarea class="form-control" name="$fname" type="text" >$pub.$fname</textarea>
+							}
+							
+							^case[decimal]{
+								<label class="control-label" id="$fname">$card_fields_name_pos.v:</label>
+								<input class="form-control" name="$fname" type="text" value="$pub.$fname" placeholder="000.00">}
+							
+							^case[int]{
+								$vsplit[^card_fields_name_pos.v.split[/;v;v]] 
+								^vsplit.save[/zzz_vsplit_table.txt]
+								$i(0)
+								<label class="control-label" id="$fname">$card_fields_name_pos.v:</label>
+								<select  class="form-control" name="$fname" >
+									^vsplit.menu{
+										<option value="$i" ^if($i eq "$pub.$fname"){selected}>$vsplit.v</option>
+										^i.inc[]
+									}                 
+								</select>
+							}
+							
+							^case[DEFAULT]{
+								<label class="control-label" id="$fname">$card_fields_name_pos.v:</label>
+								<input class="form-control" name="$fname" type="text" value="$pub.$fname">
+							}
+						
+
+
+
+						}
+						
+					}
+
+
+                    <br><br>
+                    <button id="submit_formx" type="submit" class="btn btn-default" onClick="javascript:
+						var msg   = jQuery('#formx').serialize()^;
+						jQuery.ajax({
+							type: 'POST',
+							url: '/admin/_admin_ajax/__shop.paj',
+							data: msg,
+							success: function(data) {
+								jQuery('#middle-panel').html(data) ^;
+								jQuery.post('_admin_ajax/__shop.paj', {'action' : 'list', 'uid' : '$form:uid'}, function(data){
+									jQuery('#left-content').html(data) ^;	
+								})
+							},
+							error:  function(xhr, str){
+								alert('Произошла ошибка: ' + xhr.responseCode)^;
+							}
+						})^;
+						
+						">$_t._send
+					</button>
+					
+				</form>
+			</div>
+			<div class="col-md-5">
+			^if(def $form:id){
+				$pl[^file:list[/userfiles/shop/${cookie:uid};\.(jpg|png|gif|JPG|PNG|GIF|JPEG|jpeg)^$]]
+				^connect[$CONNECT]{$apic[^string:sql{SELECT active_pic FROM ${BASE}shop WHERE id = "$form:uid"}[$.limit(1) $.default[0]]]}
+				^pl.menu{
+					<div style="width:155px^; height:155px^; float:left^;margin:40px 3px 3px 3px^;background-color:#aaa^;background-image:url(/userfiles/shop/${cookie:uid}/${pl.name})^; background-repeat: no-repeat^; -webkit-background-size: cover^; background-size: cover^;background-position:center top^;">
+
+						<div>
+						<div style="width: 155px^;height: 17px^;position: relative^;margin: 155px 0 0 0^;background-color: rgba(255, 255, 255, 0.55)^;cursor: pointer^;" ></div>
+						<div style="float:right^;width:14px^;height:13px^;position:relative^;margin:-16px 0 0 66px^;color:red^;cursor:pointer^;" class="glyphicon glyphicon-remove" 
+							onClick="javascript: 
+								if (confirm('Удалить?')) {
+								jQuery.post('_admin_ajax/__shop.paj', {'id' : '$id', 'uid' : '$cookie:uid', 'action' : 'remove_pic', 'pic' : '$pl.name', 'sub' : '$pub.sub'}, function(data){
+								jQuery('#middle-panel').html(data) ^;	
+							})}">
+						</div>
+						<div style="float:right^;width:14px^;height:13px^;position:relative^;margin:-16px 17px 0 50px^;cursor:pointer^;" class="glyphicon glyphicon-ok ^if($pub.active_pic eq $pl.name){check-active;check-noactive}"
+							onClick="javascript: 
+								jQuery.post('_admin_ajax/__shop.paj', {'id' : '$id', 'uid' : '$cookie:uid', 'action' : 'active_pic', 'pic' : '$pl.name', 'sub' : '$pub.sub'}, function(data){
+								jQuery('#middle-panel').html(data) })">
+						</div>
+						^connect[$CONNECT]{$ft[^string:sql{SELECT id FROM ${BASE}filetext WHERE path = "/userfiles/shop/${cookie:uid}_$pub.sub/${pl.name}"}[$.limit(1) $.default[0]]]}
+						<div style="float:right^;width:14px^;height:13px^;position:relative^;margin:-16px 34px 0 34px^;^if($ft eq "0"){color:black;color:green}^;cursor:pointer^;" class="glyphicon glyphicon-option-horizontal" 
+							onClick="javascript: 
+								jQuery.post(
+									'_admin_ajax/__modal_01.paj', 
+									{'id' : '$id', 'uid' : '$cookie:uid', 'action' : 'rename_pic', 'path' : '/userfiles/shop/${cookie:uid}_$pub.sub/${pl.name}'},
+									 function(data){
+										jQuery('.modal-dialog').html(data) ^;
+										jQuery('#myModal').modal('show')^;	
+									}
+								)
+						
+								
+								">
+						</div>
+						<div style="background-color:#fff^; width:155px^;height:20px^;text-align:center^;padding:4px 0 4px 0^;overflow:hidden^;font-size:11px^;">${pl.name}</div>
+						</div>
+					</div>
+				}
+				}
+				
+				<div id="results" style="margin:20px 0 20px"></div>
+				<div id="pictures" style="margin:20px 0 20px"></div>
+				<div id="drop-files" ondragover="return false" style="margin-top:40px^;width:100%^;">Перетяните изображения сюда.<br>(только в формате jpg)</div>
+				<div id="uploaded-holder">
+					<div id="dropped-files">
+						<div id="upload-button"><a href="#" class="upload">Загрузить</a><a href="#" class="delete">Удалить</a><span>0 Files</span></div>
+					</div>
+					<div id="extra-files">
+						<div class="number">0</div>
+						<div id="file-list"><ul></ul></div>
+					</div>
+					<div id="loading">
+						<div id="loading-bar">
+							<div class="loading-color"> </div>
+						</div>
+						<div id="loading-content">Загружается файл</div>
+					</div>
+					<div id="file-name-holder" style="visibility:hidden">
+						<ul id="uploaded-files"><h1>Uploaded Files</h1></ul>
+					</div>
+				</div>
+				
+				
+				
+				
+			</div>
+		</div>
+
+<!-- Modal -->
+<div  style="z-index: 100000000^;">
+<div id="myModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+
+	</div>
+</div>
+</div>
+}
+### end ne list
+
+##### list
+^if($form:action eq "list"){
+
+^connect[$CONNECT]{
+$pl[^table::sql{SELECT * FROM ${BASE}shop}]
+	^pl.sort{$pl.ft01}[asc]
+}
+
+<div style="max-height:100%^;overflow-y:auto^;">
+^pl.menu{<table style="width:100%^; margin-top:15px^;">
+			<tr id="$pl.id" style="">
+				<td style="width:15px">&nbsp^;</td>
+				<td style="vertical-align:middle"><p style="margin: 10px 0^;">$pl.ft01</td>
+				<td style="width:15px">&nbsp^;</td>
+				<td style="width:20px"><a id="edit" style="cursor:pointer" 
+				onClick="javascript: 
+						jQuery.post('_admin_ajax/__shop.paj', {'id' : '$pl.id', 'uid' : '$pl.uid', 'action' : 'edit', 'sub' : '00'}, function(data){
+ 
+							jQuery('#middle-panel').html(data)^;
+							jQuery('tr').attr('style','')^; 
+							jQuery('tr#${pl.id}').attr('style','background-color: #C2E4FD')^;
+						})">
+				<span class="glyphicon glyphicon-pencil"></span></a>
+				</td>
+				<td style="width:20px"><a id="remove" style="cursor:pointer" 
+				onClick="javascript: 
+						if (confirm('Видалити?')) {
+							jQuery.post('_admin_ajax/__shop.paj', {'id' : '$pl.id', 'uid' : '$pl.uid', 'action' : 'remove'}, function(data){
+							jQuery('#middle-panel').html(data) ^;	
+							})^;
+							jQuery.post('_admin_ajax/__shop.paj', {'action' : 'list', 'uid' : '$cookie:uid'}, function(data){
+							jQuery('#left-content').html(data) ^;	
+							})
+						
+						} else {
+							
+						}
+						"><span class="glyphicon glyphicon-remove"></span></a></td>
+				<td style="width:20px"><a id="active" style="cursor:pointer"
+				onClick="javascript: 
+						jQuery.post('_admin_ajax/__shop.paj', {'id' : '$pl.id', 'uid' : '$pl.uid', 'action' : 'active'}, function(data){
+						})^;
+						jQuery.post('_admin_ajax/__shop.paj', {'action' : 'list', 'uid' : '$cookie:uid'}, function(data){
+							jQuery('#left-content').html(data) ^;	
+						})"><span id="s-${pl.id}" class="glyphicon glyphicon-ok ^if($pl.active eq '1'){check-active;check-noactive}"></span></a></td>
+				<td style="width:15px">&nbsp^;</td>
+			</tr>
+			</table>
+			}
+</div>
+
+
+}

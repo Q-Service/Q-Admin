@@ -1,0 +1,77 @@
+^switch[$form:op]{
+
+	^case[update]{
+	
+		^connect[$CONNECT]{
+			^if(def $form:email){
+			^void:sql{update ${BASE}company set
+			name='$form:name',
+			description='$form:description',
+			address='$form:address',
+			tel='$form:tel',
+			email='$form:email' where id=1000}
+			}{$result[No E-mail]}
+		}
+
+	}
+	
+	^case[DEFAULT]{
+
+		^connect[$CONNECT]{
+				$company[^table::sql{select * from ${BASE}company}]
+		}
+		<form id="prop">
+		<table class="tablesorter" width="100%" cellpadding="2" cellspacing="2" align="top" border="0">
+		<tr>
+		<td valign=top>
+			<table width="100%">
+			<tr>
+			<td>$_t._company_name<span style="color:#FF0000">*</span></td>
+			</tr>
+			<tr>
+			<td><input class="admin_input_100" type="text" name="name" style="width:100%" value="$company.name"><br><br></td>
+			</tr>
+			<td>$_t._company_descr</td>
+			</tr>
+			<tr>
+			<td><input class="admin_input_100" type=text name=description style="width:100%" value="$company.description"><br><br></td>
+			</tr>
+			<td>$_t._company_address</td>
+			</tr>
+			<tr>
+			<td><input class="admin_input_100" type=text name=address style="width:100%" value="$company.address"><br><br></td>
+			</tr>
+			<td>$_t._company_ph</td>
+			</tr>
+			<tr>
+			<td><input class="admin_input_100" type=text name=tel style="width:100%" value="$company.tel"><br><br></td>
+			</tr>
+			<td>${_t._company_mail}<span style="color:#FF0000">*</span></td>
+			</tr>
+			<tr>
+			<td><input class="admin_input_100" type=text name=email style="width:100%" value="$company.email"><br><br></td>
+			</tr>
+			</table>
+		</td>
+		</tr>
+		<tr>
+		<td>
+			<table width="100%" border="0">
+			<tr>
+			<td width="600" valign="middle" align="left" class="report"><div id="echo"><div></td>
+			<td align="right"><button class="bt-plus" id="submit" value="update" 
+					onClick="javascript: 
+						var f = jQuery('#prop').serialize()^;
+						jQuery.post('/admin/_admin_ajax/_personal_prop.paj', f+'&op=update', function(){}).success(function(data){jQuery('#echo').html(data)})^;
+						return false^;
+				"></button>
+			</tr>
+			</table>
+		</td>
+		</tr>
+		</table>
+		</form>
+	}
+}
+#end switch
+

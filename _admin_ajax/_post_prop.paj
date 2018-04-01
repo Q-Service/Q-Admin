@@ -1,0 +1,102 @@
+^switch[$form:op]{
+
+	^case[update]{
+
+	^connect[$CONNECT]{
+		^void:sql{	update ${BASE}company set
+					text_reg_in='$form:text_reg_in',
+					text_reg_out ='$form:text_reg_out ',
+					back_email='$form:back_email',
+					error_email='$form:error_email',
+					top_menu='$form:top_menu',
+					text_reg_answ='$form:text_reg_answ',
+					email='$form:email'
+					where id=1000
+					}
+
+
+		^void:sql{	update ${BASE}admin_set set 
+					_autoreg='$form:autoreg'
+					where id=1000
+					}
+
+	}
+}
+#end update
+
+	^case[DEFAULT]{
+
+		^connect[$CONNECT]{
+		$company[^table::sql{select * from ${BASE}company where id=1000}]
+		$autoreg[^string:sql{select _autoreg from ${BASE}admin_set where id=1000}]
+		}
+
+		<form id="postprop">
+		<table class="tablesorter" width="100%" cellpadding="2" cellspacing="2" align="top" border="0">
+		<tr>
+		<td>
+			<table width="100%">
+			<tr>
+		        <td>$_t._text_in</td>
+			<tr>
+			<td><textarea style="width:100%^; height:100px^;" name=text_reg_in cols=60 rows=10 wrap=physical>$company.text_reg_in</textarea><br><br></td>
+			</tr>
+			<tr>
+			<td>$_t._text_out</td>
+			</tr>
+			<tr>
+			<td><textarea style="width:100%^; height:100px^;" name=text_reg_out  cols=60 rows=10 wrap=physical>$company.text_reg_out</textarea><br><br></td>
+			</tr>
+			<tr>
+			<td>$_t._text_ok</td>
+			</tr>
+			<tr>
+			<td><textarea style="width:100%^; height:100px^;" name=text_reg_answ  cols=60 rows=10 wrap=physical>$company.text_reg_answ</textarea><br><br></td>
+			</tr>
+			<tr>
+			<td>$_t._e_app</td>
+			</tr>
+			<tr>
+			<td><input style="width:100%^" type=text name=back_email size=50 value="$company.back_email"><br><br></td>
+			</tr>
+			<tr>
+			<td>$_t._e_err</td>
+			</tr>
+			<tr>
+			<td><input style="width:100%^;" type=text name=error_email size=50 value="$company.error_email"><br><br></td>
+			</tr>
+			<tr>
+			<td><input type=checkbox name=autoreg  ^if($autoreg eq "on"){checked}>$_t._auto_reg</td>
+			</tr>
+			</tr>
+			</table>
+		</td>
+		</tr>
+		<tr>
+		<td>
+			<table width="100%" border="0">
+			<tr>
+			<td width="100%" valign="middle" align="left" class="report"><div id="echo"></div></td>
+			<td	align="right"><button class="bt-plus" id="submit" value="update" 
+			onClick="javascript: 
+				var f = jQuery('#postprop').serialize()^;
+				jQuery.get('/admin/_admin_ajax/_post_prop.paj', f+'&op=update', function(){}).success(function(data){jQuery('#echo').html(data)})^;
+				return false^;
+			"></button></td>
+			</tr>
+			</table>
+		</td>
+		</tr>
+		</table>
+		</form>
+}
+#end default	
+	
+	
+	
+	
+}
+#end switch
+
+
+

@@ -1,0 +1,208 @@
+$echo[]
+### new
+^if($form:action eq "new"){
+	^if($form:pass ne $form:pass_re){$echo[Паролі не збігаються.]}
+	^if($form:name ne "" && $form:login ne ""  && $form:pass eq $form:pass_re && $form:email ne ""){
+		^connect[$CONNECT]{
+		$dup[^string:sql{SELECT id FROM ${BASE}admins WHERE email = "$form:email"}[$.limit(1) $.default[0]]]
+		^if($dup ne "0"){
+			$echo[Менеджер з електронною поштою $form:email вже існує.]
+		}{	
+			$ch[]
+			^form:fields.foreach[field;value]{ 
+   					^if(^field.left(2) eq "x_" && $value eq "on"){$ch[$ch^field.match[x_][]{}:${form:region},]}
+			}
+			^void:sql{INSERT INTO ${BASE}admins SET name = "$form:name", login = "$form:login", region = "$form:region", email = "$form:email", creator = "$cookie:user", admin_right = "$ch", pass = "^math:crypt[$form:pass;^$apr1^$]" }	
+		}
+		}
+	
+	
+	}
+
+}
+### edit
+^if($form:action eq "edit"){
+
+		
+		^if($form:pass ne $form:pass_re){$echo[Паролі не збігаються.]}{
+	
+		^if($form:name ne "" && $form:login ne "" && $form:email ne ""){
+			$pass[^math:crypt[$form:pass;^$apr1^$]]
+			$ch[]
+			^form:fields.foreach[field;value]{ 
+   					^if(^field.left(2) eq "x_" && $value eq "on"){$ch[$ch^field.match[x_][]{}:${form:region},]}
+			}
+			^connect[$CONNECT]{
+				^void:sql{UPDATE ${BASE}admins SET 
+					name = "$form:name", 
+					login = "$form:login", 
+					region = "$form:region", 
+					email = "$form:email", 
+					creator = "$cookie:user",
+					^if($form:pass ne ""){pass = "^math:crypt[$form:pass;^$apr1^$]",}
+					admin_right = "$ch" 
+					WHERE id = "$form:id"
+				}	
+		
+			}
+		}
+	}
+}
+### remove
+^if($form:action eq "remove"){
+	^connect[$CONNECT]{
+		^void:sql{DELETE FROM ${BASE}admins WHERE id = $form:id}
+	}
+}
+### active
+^if($form:action eq "active"){
+	^connect[$CONNECT]{
+	$a[^string:sql{select active from ${BASE}admins WHERE id = "$form:id"}[$.limit(1) $.default[0]]] 
+	^void:sql{UPDATE ${BASE}admins SET active ="^if($a eq '0'){1;0}" WHERE id = $form:id}
+	}
+
+}
+
+##  ne list
+^if($form:action ne "list"){
+
+
+^if($form:action eq "edit"){
+^connect[$CONNECT]{
+$manag[^table::sql{SELECT * FROM ${BASE}admins WHERE id = "$form:id"}]
+}
+}
+
+
+
+
+<div class="help"  style="width:100%^;background-color: #abc^;padding-bottom: 15px^;">
+<div class="help-header" style="height:40px^;"><a href="javascript:onoff('div1')^;"><span style="font-size:24px^;padding:15px^;" class="glyphicon glyphicon-question-sign"  aria-hidden="true"></span></a></div>
+<div id="div1" style="display:none^;padding:15px^;z-index:999999999^;width:80%^;">^ins[7487]</div>
+
+
+</div>
+
+<form role="form" method="POST" id="formx" action="javascript:void(null)^;">
+<div style="width:40%^; margin:15px^;float:left">
+	<div class="result" style="color:red^;">$echo</div>
+    <input id="id" name="id" type="hidden" value="^if($form:id ne ""){${form:id};0}">
+    <input id="action" name="action" type="hidden" value="^if($form:id ne ""){edit;new}">
+	<input type="hidden" id="region" name="region" value="00">
+		
+	<div class="form-group">
+        <label class="control-label">$_t._nickname</label>
+        <input class="form-control" type="text" id="name" name="name" value="$manag.name">
+    </div>
+    <div class="form-group">
+        <label class="control-label">E-mail</label>
+        <div class="input-group">
+        	<input class="form-control" type="text" id="email" name="email" value="$manag.email">
+       	 	<span class="input-group-addon" style="padding: 0 10px 0 10px^;"></span>
+		</div>
+    </div>
+	<div class="form-group">
+        <label class="control-label">$_t._login</label>
+        <div class="input-group">
+    		<input class="form-control" type="text" id="login" name="login" value="$manag.login">
+        	<span class="input-group-addon" style="padding: 0 10px 0 10px^;"></span>
+    	</div>
+    </div>
+    <div class="form-group">
+    	<label class="control-label">$_t._pass</label>
+    	<div class="input-group">
+        	<input class="form-control" type="pass" id="pass" name="pass" value="" >
+        	<span class="input-group-addon" style="padding: 0 10px 0 10px^;"></span>
+    	</div>
+    </div>
+    <div class="form-group">
+    	<label class="control-label">$_t._pass</label>
+    	<div class="input-group">
+			<input class="form-control" type="pass_rd" id="pass_re" name="pass_re"  value="">
+        	<span class="input-group-addon" style="padding: 0 10px 0 10px^;"></span>
+    	</div>
+    </div>
+    $tm[^table::load[nameless;/_qadminMenu.cfg]]
+    ^tm.menu{
+    	^if($tm.0 eq "~" || $tm.0 eq "[" || $tm.0 eq "]" || $tm.0 eq "#"){}{ 
+		<div class="checkbox">
+			<label><input type="checkbox" id="x_${tm.0}" name="x_${tm.0}" $n(^manag.admin_right.match[$tm.0][n]) ^if($n != 0){checked}>^process{^untaint{$tm.1}}</label>
+		</div>
+    	}
+    }[]
+    <hr style="border-top: 1px solid #999^;">
+
+    <button id="submit_formx" type="submit" class="btn btn-primary pull-right" onClick="javascript:
+		var msg   = jQuery('#formx').serialize()^;
+			jQuery.ajax({
+				type: 'POST',
+				url: '/admin/_admin_ajax/_admins.paj',
+				data: msg,
+				success: function(data) {
+					jQuery('#middle-panel').html(data) ^;
+				},
+				error:  function(xhr, str){
+					alert('Виникла помилка: ' + xhr.responseCode)^;
+				}
+			})^;
+			jQuery.post('_admin_ajax/_admins.paj', {'action' : 'list', 'UID' : '$form:UID'}, function(data){
+				jQuery('#left-content').html(data) ^;	
+			})
+			">^if($form:id ne ""){$_t._Change;$_t._AddNew}</button>
+
+}{
+##### list
+
+
+
+^connect[$CONNECT]{
+$man[^table::sql{SELECT id, login, name, active FROM ${BASE}admins}]
+^man.sort{$man.id}[desc]
+}
+<table style="width:100%^; margin-top:15px^;">
+^man.menu{	<tr id="$man.id" style="">
+				<td style="width:15px">&nbsp^;</td>
+				<td style="vertical-align:middle"><p style="margin: 10px 0^;"><b>$man.id</b>&nbsp^;$man.login</p><p>$man.name</p></td>
+				<td style="width:15px">&nbsp^;</td>
+				^if($man.active eq "9"){
+					<td></td><td></td><td></td>
+				}{
+				<td style="width:20px"><a id="edit" style="cursor:pointer" 
+				onClick="javascript: 
+						jQuery.post('_admin_ajax/_admins.paj', {'id' : '$man.id', 'action' : 'edit'}, function(data){
+							jQuery('tr').attr('style','')^; 
+							jQuery('tr#$man.id').attr('style','background-color:#C2E4FD')^; 
+							jQuery('#middle-panel').html(data) ^;	
+						})">
+				<span class="glyphicon glyphicon-pencil"></span></a>
+				</td>
+				<td style="width:20px"><a id="remove" style="cursor:pointer" 
+				onClick="javascript: 
+						if (confirm('Видалити?')) {
+							jQuery.post('_admin_ajax/_admins.paj', {'id' : '$man.id', 'action' : 'remove'}, function(data){
+							jQuery('#middle-panel').html(data) ^;	
+							})^;
+							jQuery.post('_admin_ajax/_admins.paj', {'action' : 'list'}, function(data){
+							jQuery('#left-content').html(data) ^;	
+							})
+						
+						} else {
+							
+						}
+						"><span class="glyphicon glyphicon-remove"></span></a></td>
+				<td style="width:20px"><a id="active" style="cursor:pointer"
+				onClick="javascript: 
+						jQuery.post('_admin_ajax/_admins.paj', {'id' : '$man.id', 'action' : 'active'}, function(data){
+						})^;
+						jQuery.post('_admin_ajax/_admins.paj', {'action' : 'list', 'UID' : '$form:UID'}, function(data){
+							jQuery('#left-content').html(data) ^;	
+						})"><span id="s-${man.id}" class="glyphicon glyphicon-ok ^if($man.active eq '1'){check-active;check-noactive}"></span></a></td>
+				}
+				<td style="width:15px">&nbsp^;</td>
+			</tr>}
+</table>
+
+}
+
+
+

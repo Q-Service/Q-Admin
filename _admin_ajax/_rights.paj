@@ -1,0 +1,54 @@
+^switch[$form:op]{
+
+	^case[update]{
+		^connect[$CONNECT]{
+		^void:sql{update ${BASE}company set copyright="$form:copyright" where id="1000"}
+		}
+		$result[Ok]
+	}
+	
+	^case[DEFAULT]{
+	
+		^connect[$CONNECT]{
+			$company[^table::sql{select * from ${BASE}company}]
+		}
+		<form name="prop">
+		<table class="tablesorter" width="100%" cellpadding="2" cellspacing="2" align="top" border="0">
+		<tr>
+		<td>
+			<table width="100%">
+			<tr>
+			<td>$_t._copyright</td>
+			</tr>
+			<tr>
+			<td><textarea class=admin_textarea_2 name=copyright  style="width:100%^;height:200px" wrap="physical">$company.copyright</textarea><br><br></td>
+			</tr>
+			</table>
+		
+		</td>
+		</tr>
+		<tr>
+		<td>
+			<table width="100%" border="0">
+			<tr>
+			<td width="100%" valign="middle" class="report"><div id="echo"></div></td>
+			<td	align="right"><button class="bt-plus" id="submit" value="update" 
+			onClick="javascript: 
+				var f = jQuery('#postprop').serialize()^;
+				jQuery.get('/admin/_admin_ajax/_rights.paj', f+'&op=update', function(){}).success(function(data){jQuery('#echo').html(data)})^;
+				return false^;
+			"></button></td>
+			</tr>
+			</table>
+		</td>
+		</tr>
+		</table>
+		</form>
+	}
+	
+}
+# end switch
+
+
+
+

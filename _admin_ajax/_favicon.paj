@@ -1,0 +1,86 @@
+^switch[$form:op]{
+
+	^case[upload]{
+		
+		$a[^form:fields.foreach[field;value]{ 
+		   $field - $value 
+		}]
+		
+		^file:move[/${form:oldname};/_ico/favicon.${form:ext}] 
+
+	
+	}
+	
+	^case[DEFAULT]{
+		
+		<table class="tablesorter" width="600" cellpadding="2" cellspacing="2" align="top" border="0">
+		<tr height="22">
+		<td>
+		<table width="100%" cellpadding="2" cellspacing="0" align="top" border="0">
+		<tr>
+		<td align="left" width="230">(*.png 32x32, 24x24, 16x16 px)</td>
+		<td><span id="status" ></span></td>
+		<td align="right">
+		<link href="/admin/fileuploader/fileuploader.css" rel="stylesheet" type="text/css" />
+		<script src="/admin/fileuploader/fileuploader.js" type="text/javascript"></script>
+		<div id="file-uploader"><noscript><p>Please enable JavaScript to use file uploader.</p></noscript></div>
+		</td>
+		</tr>                                                                                                  
+		</table>
+		</td>
+		</tr>
+		<tr height="22">
+		<td>
+			<table width="600" cellpadding="3" cellspacing="0" align=top border="0">
+			^if(def ^file:find[/_ico/favicon.ico]){<tr height="12"><td valign="middle">favicon.ico</td><td width="10" align="right" valign="bottom"><img class="button_pref" src="/_ico/favicon.ico" width="16" height="16"></td>}
+			^if(def ^file:find[/_ico/favicon.png]){<tr height="12"><td valign="middle">favicon.png</td><td width="10" align="right" valign="bottom"><img class="button_pref" src="/_ico/favicon.png" width="16" height="16"></td>}
+			</tr>
+			</table>
+		</td>
+		</tr>
+		</table>
+
+
+
+		<script type="text/javascript" >
+
+	var i=0 ^;        
+	    jQuery(function(){
+		
+	        var uploader = new qq.FileUploader({
+			element: document.getElementById('file-uploader'),
+			action: '/admin/fileuploader/php.php',
+			sizeLimit: 0,
+			params: {
+			uploadsDir: "../../_ico/"
+			},
+			template: '<div class="qq-uploader">' + 
+		                '<div class="qq-upload-drop-area"><span>Drop files here to upload</span></div>' +
+                		'<div class="qq-upload-button">$_t._uploadFiles</div>' +
+		                '<ul class="qq-upload-list"></ul>' + 
+			        '</div>',
+
+			onSubmit: function(id, fileName){},
+			onProgress: function(id, fileName, loaded, total){},
+			onComplete: function(id, fileName, responseJSON){
+			i++ ^;
+			fext = getFileExtension(fileName) ^;
+			jQuery.post('_admin_ajax/_favicon.paj', {op : 'upload', oldname : fileName, ext: fext }).success('_admin_ajax/_favicon.paj', function(data){ jQuery('#middle-panel').html(data) } )^;
+				},
+			onCancel: function(id, fileName){
+
+			},   	 	
+
+	        })^;           
+	    })^;
+
+function getFileExtension(filename)
+{
+  var ext = /^^.+\.([^^.]+)^$/.exec(filename)^;
+  return ext == null ? "" : ext[1]^;
+}^;
+</script>
+
+	}
+}
+#end switch

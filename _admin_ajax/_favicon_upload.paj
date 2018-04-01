@@ -1,0 +1,9 @@
+
+$a[^form:fields.foreach[field;value]{ 
+   $field - $value 
+}]
+
+$ext[^a.name.right(4)]] 
+
+
+^a.save[binary;/_ico/favicon$ext] 

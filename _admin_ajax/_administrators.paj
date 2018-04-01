@@ -1,0 +1,368 @@
+^connect[$CONNECT]{
+$admins[^table::sql{select * from ${BASE}admins}]
+$bossadmin[^table::sql{select * from ${BASE}admins where login="$cookie:user"}]
+^if(-f "/_qadminMenu.cfg"){
+	$admin[^table::load[nameless;/_qadminMenu.cfg]]
+	}{
+	$admin[^table::load[nameless;/admin/_qadminMenu.cfg]]
+	}
+}
+$bossthis[$bossadmin.rights]
+^if(^bossthis.match[,prefs]  || $bossadmin.active eq "9"){}{$result[No Right] $result}
+
+^switch[$form:op]{
+	
+	^case[new]{
+
+		<form id="add_admin">
+		<table class="tablesorter" width="600" cellpadding="2" cellspacing="2" align="top" border="0">
+		<tr>
+		<td valign=top>
+		
+			<table width="100%" border="0">
+			<tr>
+			<td colspan=3>$_t._access_time:zzzzzzz</td>
+			</tr>
+			<tr>
+			<td width="10">$_t._start_time</td>
+			<td><select  id="fromhour" class="admin_select_little" name="fromhour">^for[i](0;23){<option>$i</option>}</select> ${_t._h}.</td>
+			<td><select class="admin_select_little" name="fromminute">^for[i](0;59){<option>$i</option>}</select> ${_t._m}.</td>
+			</tr>
+			<tr>
+			<td width="10">$_t._end_time</td>
+			<td><select class="admin_select_little" name="tohowr">^for[i](0;23){<option ^if($i eq 23){selected}>$i</option>}</select> ${_t._h}.</td>
+			<td><select class="admin_select_little" name="tominute">^for[i](0;59){<option ^if($i eq 59){selected}>$i</option>}</select> ${_t._h}.</td>
+			</tr>
+			<td colspan=3>&nbsp<br><br></td>
+			</tr>
+			<tr>
+			<td colspan=3>${_t._login}*:</td>
+			</tr>
+			<tr>
+			<td colspan=3><input style="width:100%^;" type="text" name="login"></td>
+			</tr>
+			<tr>
+			<td colspan=3>${_t._pass}*:</td>
+			</tr>
+			<tr>
+			<td colspan=3><input style="width:100%^;" type="text" name="pass">
+			</tr>
+			<tr>
+			<td colspan=3>e-mail*:</td>
+			</tr>
+			<tr>
+			<td colspan=3><input style="width:100%^;" type="text" name="email">
+			</tr>
+			<tr>
+			<td colspan=3>	</td>
+			</tr>
+			</table>
+		
+		</td>
+		<td valign=top>
+		
+			<table border="0" width="100%">
+			<tr>
+			<td>
+			$i(0)
+			^admin.menu{
+			$bossthis[$bossadmin.rights]
+			^if($admin.0 eq "[" || $admin.0 eq "]" || $admin.0 eq "" || $admin.0 eq "~"){
+			}{
+			^if(^bossthis.match[,$admin.0] || $bossadmin.active eq "9"){
+			<input type="checkbox" name="all$i" id="$admin.0" value="$admin.0">^process{^taint[as-is][$admin.1]}<br>^i.inc[]
+			}
+			}
+			
+			}
+			</td>
+			</tr>
+			</table>
+		
+		</td>
+		</tr>
+		<tr>
+		<td colspan="2" bgcolor="#fff" align="right" valign="middle" width="22">
+		<table width="100%" border="0">
+		<tr>
+		<td width="600" valign="middle" class="report">&nbsp^;</td>
+		<td><button class="bt-plus" value="" 
+			onClick="javascript: 
+			var f = jQuery('#add_admin').serialize()+'&op=add'^;
+			jQuery.post('/admin/_admin_ajax/_administrators.paj', f, function(){
+				jQuery.post('_admin_ajax/_administrators.paj',   function(data) { jQuery('#middle-panel').html(data) })
+			})^;
+			return false ^;
+			
+			"></button></td>
+		</tr>
+		</table>
+		</td>
+		</tr>
+		</table>
+		</form>
+
+
+}
+#end new
+	
+	^case[add]{ 
+		$right[]
+		$right[^for[i](0;50){^if(def $form:all$i){${right},$form:all$i}}]
+
+	
+		^connect[$CONNECT]{
+			^if((def $form:login) && (def $form:pass) && (def $form:email)){
+			$crypted[^math:crypt[$form:pass;^$apr1^$]] 
+
+			$admin_ok[^table::sql{select * from ${BASEBOSS}admins where login="$form:login"}]
+				^if(!($admin_ok)){
+				^void:sql{INSERT INTO ${BASE}admins (login, pass, email, rights, fromhowr, fromminute, tohowr, tominute, datecreate, creator) 
+				VALUES ("$form:login", "$crypted", "$form:email", "$right", "$form:fromhowr", "$form:fromminute", "$form:tohowr", "$form:tominute", "^datenow[]", "$cookie:user")}
+				}
+			}
+		}
+		<script>
+		^$.post('_admin_ajax/_administrators.paj', {op:'list'}, function(data) {jQuery('#middle-panel').html(data) })^;
+		</script>
+	
+}
+#end add
+
+
+	^case[update]{ 
+		$right[]
+		$right[^for[i](0;50){^if(def $form:all$i){${right},$form:all$i}}]
+
+		^connect[$CONNECT]{
+			^if(def $form:login){
+			^void:sql{	UPDATE ${BASE}admins SET 
+			login="$form:login", 
+			email="$form:email",
+			^if(def $form:pass){
+			$crypted[^math:crypt[$form:pass;^$apr1^$]]
+			pass="$crypted", 
+			}
+			rights="$right", 
+			fromhowr="$form:fromhowr", 
+			fromminute="$form:fromminute", 
+			tohowr="$form:tohowr", 
+			tominute="$form:tominute", 
+			modif="${cookie:user}:${cookie:sess}:^datenow[]"
+			WHERE id="$form:id"}
+			}
+			
+#		<script>
+#		^$.post('_admin_ajax/_administrators.paj', {op:'list'}, function(data) {jQuery('#middle-panel').html(data) })^;
+#		</script>	
+		}
+}
+#update
+
+
+	^case[delete]{
+	
+		^connect[$CONNECT]{
+			^void:sql{DELETE FROM ${BASE}admins WHERE id = "$form:id"}
+		}
+		
+		<script>
+		^$.post('_admin_ajax/_administrators.paj', {op:'list'}, function(data) {jQuery('#middle-panel').html(data) })^;
+		</script>
+	
+}
+#end delete
+
+	^case[edit]{
+		^connect[$CONNECT]{
+		$thisadmin[^table::sql{select * from ${BASE}admins where id="$form:id"}]
+		}
+<form id="edit_admin">
+<input type="hidden" name="id" value="$form:id">
+
+<table class="tablesorter" width="600" cellpadding="2" cellspacing="2" align="top" border="0">
+
+<tr>
+<td width="300" valign="top">
+	<table width="300" border="0">
+	<tr>
+	<td>$_t._access_time:</td>
+	</tr>
+	<tr>
+	<td>
+		$_t._start_time 
+		<select  id="fromhour" class="admin_select_little" name="fromhour">^for[i](0;23){<option ^if($thisadmin.fromhowr eq $i){selected}>$i</option>}</select> 
+		${_t._h}. 
+		<select class="admin_select_little" name="fromminute">^for[i](0;59){<option>$i</option ^if($thisadmin.fromminute eq $i){selected}>}</select> 
+		${_t._m}. 
+		$_t._end_time <select class="admin_select_little" name="tohowr">^for[i](0;23){<option ^if($thisadmin.tohowr eq $i){selected}>$i</option>}</select> 
+		${_t._h}. 
+		<select class="admin_select_little" name="tominute">^for[i](0;59){<option ^if($thisadmin.tominute eq $i){selected}>$i</option>}</select> 
+		${_t._h}.
+	</td>
+	</tr>
+	<tr>
+	<td>${_t._login}*:</td>
+	</tr>
+	<tr>
+	<td><input style="width:100%^;" type="text" name="login" value="$thisadmin.login"></td>
+	</tr>
+	<tr>
+	<td>${_t._pass}*:</td>
+	</tr>
+	<tr>
+	<td><input style="width:100%^;" type="text" name="pass" value=""></td>
+	</tr>
+	<tr>
+	<td>e-mail*:</td>
+	</tr>
+	<tr>
+	<td><input style="width:100%^;" type="text" name="email" value="$thisadmin.email"></td>
+	</tr>
+	</table>
+
+</td>
+<td valign="top">
+	<table border="0">
+	<tr>
+	<td>
+		$i(0)
+		^admin.menu{
+		$this[$thisadmin.rights]
+		$bossthis[$bossadmin.rights]
+		^if($admin.0 eq "[" || $admin.0 eq "]" || $admin.0 eq "" || $admin.0 eq "none" || $admin.0 eq "~"){
+			}{
+				^if(^bossthis.match[,$admin.0] || $bossadmin.active eq "9"){
+				<input type="checkbox" name="all$i" id="$admin.0" value="$admin.0" ^if(^this.match[,$admin.0]){checked}>^process{^taint[as-is][$admin.1]}<br>^i.inc[]
+				}
+			}
+		
+		}
+	</td>
+	</tr>
+	</table>
+</td>
+</tr>
+<tr>
+<td colspan="2" bgcolor="#fff" align="right" valign="middle" width="22">
+	<table width="100%" border="0">
+	<tr>
+	<td width="600" valign="middle" class="report">&nbsp^;</td>
+	<td><button class="bt-change" value="" 
+		onClick="javascript: 
+				var f = jQuery('#edit_admin').serialize() + '&op=update'^;
+				jQuery.post('/admin/_admin_ajax/_administrators.paj', f, function(){
+					jQuery.post('_admin_ajax/_administrators.paj',   function(data) { jQuery('#middle-panel').html(data) })
+				})^;
+				return false ^;
+				
+			"></button>
+	</td>
+	</tr>
+	</table>
+</td>
+</tr>
+</table>
+</form>
+	
+	
+	
+}
+#end edit
+
+	^case[active]{
+	
+		^connect[$CONNECT]{
+			$active[^string:sql{select active from ${BASE}admins where id="$form:id"}]
+			^if($active eq 1){$active[0]}{$active[1]}
+			^void:sql{update ${BASE}admins set active="$active" where id="$form:id"}
+		}
+	
+		
+	
+}
+#end active
+
+	^case[DEFAULT]{
+
+		<table class="tablesorter" width=600 cellpadding=2 cellspacing=2 align=top border=0>
+		<tr height="22">
+		<td>
+			<table width=600 cellpadding="2" cellspacing="0" align=top border="0">
+			<tr>
+			<td width="10" align="right" valign="bottom"><button class="bt-plus" title="$_t._add" value="" 
+				onClick="javascript: 
+						^$.get('_admin_ajax/_administrators.paj', {op:'new'}, function(data) {jQuery('#middle-panel').html(data) })^;
+			"></button>
+			</td>
+			</tr>                                                                                                  
+			</table>
+		</td>
+		</tr>
+		^admins.menu{
+		<tr height=22>
+		<td>
+			<table width=600 cellpadding="3" cellspacing="0" align=top border="0">
+			^if($admins.active eq 9){
+			<tr height="12"><td valign="middle">root</td>
+			<td width="20" align="left" valign="bottom"><button border="0" class="bt-admroot" value="${dir}/${ffdir.name}" ></button></td>
+			<td width="20" align="right" valign="bottom"><button class="bt-unrename" value="${dir}/${ffdir.name}" ></button></td>
+			<td width="20" align="right" valign="bottom"><button class="bt-unremove" value="${dir}/${ffdir.name}" ></button></td>
+			}{
+ 		   <tr height="12"><td valign="right">$admins.login</td>
+			<td width="20" align="right" valign="bottom"
+				<button class="button-pref" 
+				title="^if($admins.active eq 1){$_t._desactivate}{$_t._activate}"
+				onClick="javascript: 
+				var f= 'id=${admins.id}&op=active'^; 
+				jQuery.get('_admin_ajax/_administrators.paj', f, function(data) {
+					jQuery.get('_admin_ajax/_administrators.paj', function(data) { jQuery('#middle-panel').html(data) })
+				})^;"
+				>
+				<img src="_admin_img/16x16/^if($admins.active eq 1){active.png}{unactive.png}">
+				</button>
+			</td>
+		
+			<td width="20" align="right" valign="bottom">
+			<button class="button-pref" 
+			title="$_t._edit" 
+			onClick="javascript: 
+			var f= 'id=${admins.id}&op=edit'^; 
+			^$.get('_admin_ajax/_administrators.paj', f, function(data) {^$('#middle-panel').html(data)})^;
+			">
+			<img src="_admin_img/16x16/rename.png">
+			</button>
+			</td>
+	
+			<td width="20" align="right" valign="bottom">
+			<button class="bt-delete" title="$_t._delete" value="${dir}/${ffdir.name}" 
+				onClick="javascript: 
+				jConfirm('Can you confirm this?', 'Confirmation Dialog', function(r) {
+				if( r == true ){ 
+					var f = 'id=${admins.id}&op=delete'^; 
+					jQuery.post('_admin_ajax/_administrators.paj', f,  function() {
+						jQuery.post('_admin_ajax/_administrators.paj', f,  function(data) { jQuery('#middle-panel').html(data) })
+					})^;
+			    }	
+				})">
+			</button>
+			</td>
+			}
+			</tr>
+			</table>
+		</td>
+		</tr>
+		}
+		</table>
+}
+#end default	
+
+}
+#end switch
+
+
+
+
+
+
+

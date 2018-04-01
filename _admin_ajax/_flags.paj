@@ -1,0 +1,65 @@
+# Q-Admin v:5.0.1 (http://qservice.ws) # Copyright 2004-2015 Q-Service # Licensed under MIT # 2015.10.07 (2004.03.12) #
+
+^connect[$CONNECT]{
+^if((def $form:id) && ($form:id ne "undefined")){
+$id[^form:id.match[(node_)][g]{}]
+$f[^table::sql{select * from ${BASE}structure where id = $id}]
+<nobreak>
+
+<table id="aflagst" width="248" height="20" border="0" style="margin:5px">
+	<tr valign="bottom" align="center" valign="middle">
+		<td width="22"><img title="Visible" src="_admin_img/16x16/^if($f.active == 0){no}visible.png" alt="" /></td>
+		<td width="22"><img  title="Without Document " src="_admin_img/16x16/^if($f.container == 1){no}woutdoc.png" alt="" /></td>
+		<td width="22"><img title="Banner Link" src="_admin_img/16x16/^if($f.banner_link == 0){no}banner.png" alt="" /></td>
+		<td width="22"><img title="Lock-Unlock" src="_admin_img/16x16/^if($f.q == 0){un}lock.png" alt="" /></td>
+			^if($f.href ne ""){<td width="22"><img title="Href" src="_admin_img/16x16/globe.png" alt="" />&nbsp^;</td>}
+			^if($f.img ne ""){<td width="22"><img title="Href" src="_admin_img/16x16/image.png" alt="" />&nbsp^;</td>}
+			^if($f.secret == 1){<td width="22"><img title="Visible" src="_admin_img/16x16/secret.png" alt="" />&nbsp^;</td>}
+
+
+         $cataloque_id[^string:sql{SELECT id FROM ${BASE}structure WHERE plugLink = 'cataloque'}[$.limit(1) $.default{0}]]
+		$cataloque_idx[^string:sql{SELECT idx FROM ${BASE}structure WHERE plugLink = 'cataloque'}[$.limit(1) $.default{0}]]
+		$childMax[^string:sql{SELECT childMax FROM ${BASE}structure WHERE plugLink = 'cataloque'}[$.limit(1) $.default{0}]]
+		$pos[$cookie:pos]
+		^if(def $pos){$pos[$cookie:pos]}{$pos[1]}
+		^if(def $num_menu){}{$num_menu[1]}
+		^if(def $form:pos){$num_menu[$form:pos]}
+		$serverside[_server.paj]
+		^if($cataloque_id ne "0" && $cataloque_idx eq $pos){$serverside[_cataloques.paj]}
+
+		$structure[^table::sql{SELECT * FROM ${BASE}structure ORDER BY id}]
+
+		<td align="right">id=</td>
+		<td width="98" align="right">
+		<select name="structure" id="structure" style="width:100%">
+		^structure.menu{<option value="$structure.id" ^if($form:id eq $structure.id){selected}>$structure.id</option>}
+		</select>
+		</td>
+	</tr>
+</table>
+
+</nobreak>
+
+
+}
+}
+
+<script>
+jQuery("#structure").change(function(){ 
+	jQuery('#middle-panel').css('visibility','');
+	id = this.value;
+	jQuery.get('_admin_ajax/_flags.paj?id=' + id, function(data) {
+		jQuery('#left-flags').html(data);
+	});
+
+	^$.jstree._reference('#left-content').deselect_node();
+	^$.jstree._reference('#left-content').select_node(^$('#node_' + id));
+
+        
+	jQuery.get('$serverside',{id: 'node_' + id , operation: "loadfile", idx: "$cookie:idx", lang: "$cookie:idx"}, function(data) {
+		jQuery('#elm1').tinymce().execCommand('mceSetContent',true, data );
+	});
+
+});
+
+</script>

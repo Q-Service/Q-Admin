@@ -1,0 +1,30 @@
+^switch[$form:op]{
+	^case[left]{
+		<ul class="prop-menu">
+			<li><a class="ajax-propp" id="administrators">Администраторы</a></li>
+			<li><a class="ajax-propp" id="personal_prop">Персональные настройки</a></li>
+			<li><a class="ajax-propp" id="post_prop">Почтовые настройки</a></li>
+			<li><a class="ajax-propp" id="rights">Права</a></li>
+			<li><a class="ajax-propp" style="color:#aaa" id="lang_and_add_menus">Языки и дополнительные меню</a></li>
+			<li><a class="ajax-propp" id="server">Состояние сервера</a></li>
+			<li><a class="ajax-propp" id="awstats">Статистика</a></li>
+			<li><a class="ajax-propp-no" style="color:#aaa" id="add_modules">Дополнительные модули</a></li>
+			<li><a class="ajax-propp" style="color:#aaa" id="cascading_style_sheets">Редактирование стилей (CSS)</a></li>
+			<li><a class="ajax-propp" style="color:#aaa" id="html_edditor">Настройка HTML редактора</a></li>
+			<li><a class="ajax-propp" id="favicon">Favicon (иконка в адресной строке)</a></li>
+			<li><a class="ajax-propp" style="color:#aaa" id="backup">Резервное копирование</a></li>
+			<li><a class="ajax-propp" style="color:#aaa" id="questionnaire">Опросник</a></li>
+			<hr>
+			<li><a class="ajax-propp" style="color:#aaa" id="root_staff">Root Staff</a></li>
+			<li><a class="ajax-propp" id="resize_pref">Resize Preferences</a></li>
+		</ul>
+	<script>
+
+	jQuery('a.ajax-propp').click(function(){ jQuery('#middle-panel').load('/admin/_admin_ajax/_'+this.id+'.paj')})
+</script>
+
+	}
+
+	^case[middle]{}
+	
+}

@@ -1,0 +1,156 @@
+﻿^connect[$CONNECT]{
+$title_def[^string:sql{SELECT title FROM ${BASE}structure WHERE id=1000}[$.default{}]]
+$defhead[^table::sql{SELECT * FROM ${BASE}structure WHERE id=1000}]
+$caption[^string:sql{SELECT caption FROM ${BASE}structure WHERE id=$form:id}[$.default{$title_def}]]
+$title[^string:sql{SELECT title FROM ${BASE}structure WHERE id=$form:id}[$.default{$title_def}]]
+$name[^string:sql{SELECT name FROM ${BASE}structure WHERE id=$form:id}[$.default{$title}]]
+$meta_d[^string:sql{SELECT meta_d FROM ${BASE}structure WHERE id=$form:id}[$.default{$defhead.meta_d}]]
+^if($meta_d eq ''){$meta_d[$defhead.meta_d]}
+$meta_k[^string:sql{SELECT meta_k FROM ${BASE}structure WHERE id=$form:id}[$.default{$defhead.meta_d}]]
+^if($meta_k eq ''){$meta_k[$defhead.meta_k]}
+$fu[^string:sql{SELECT fu FROM ${BASE}structure WHERE id=$form:id}[$.default{$form:id}]]
+^if($fu eq ''){$fu[$form:id]}
+
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td><h4>$_t._title_p</h4></td>
+</tr>
+<tr>
+<td align="center" valign="top">
+<textarea class="form-control" name="n" wrap="physical" id="n1">$caption</textarea>
+</td>
+</tr>
+<tr>
+<td height="40" align="center" valign="bottom">
+<input 
+	style="width:100%" 
+	class="btn btn-primary"
+	type="submit" 
+	name="ns" 
+	id="ns1" 
+	value="$_t._change" 
+	onClick="javascript:
+		f1 = jQuery('#n1').val()^;
+		jQuery.get('/admin/_admin_ajax/__update_table.paj', {'t':'structure','f':'caption','fv':f1, 'id':'$form:id'}, function(){return false^;})
+	"
+
+
+
+/>
+</td>
+</tr>
+#=====================================================================================================
+<tr>
+<td><h4>Frendly URL</h4><div style="padding-bottom:20px^;text-align:justify^;">$_t._fURLt</div></td>
+</tr>
+<tr>
+<td align="center" valign="top">
+<textarea class="form-control" name="fu" wrap="physical" id="fu">$fu</textarea>
+</td>
+</tr>
+<tr>
+<td height="40" align="center" valign="bottom">
+<input class="btn btn-primary" 
+	style="width:100%"
+	type="submit" 
+	name="ns" 
+	id="ns1" 
+	value="$_t._change" 
+	onClick="javascript:
+		f1 = jQuery('#fu').val()^;
+		jQuery.get('/admin/_admin_ajax/__update_table.paj', {'t':'structure','f':'fu','fv':f1, 'id':'$form:id'}, function(){return false^;})
+	"
+
+
+
+/>
+</td>
+</tr>
+
+#=====================================================================================================
+<tr>
+<td><h4>title</h4></td>
+</tr>
+<tr>
+<td align="center" valign="top">
+<textarea class="form-control"  name="n" wrap="physical" id="n2">$title</textarea>
+</td>
+</tr>
+<tr>
+<td height="40" align="center" valign="bottom">
+<input class="btn btn-primary"
+	style="width:100%"
+	type="submit" 
+	name="ns" 
+	id="ns2" 
+	value="$_t._change" 
+	onClick="javascript:
+		f2 = jQuery('#n2').val()^;
+		jQuery.get('/admin/_admin_ajax/__update_table.paj', {'t':'structure','f':'title','fv':f2, 'id':'$form:id'}, function(){return false^;})
+	"
+
+
+
+/>
+</td>
+</tr>
+<tr>
+<td><h4>meta (description)</h4></td>
+</tr>
+<tr>
+<td align="center" valign="top">
+<textarea class="form-control"  name="n" wrap="physical" id="n3">$meta_d</textarea>
+</td>
+</tr>
+<tr>
+<td height="40" align="center" valign="bottom">
+<input class="btn btn-primary" 
+	style="width:100%"
+	type="submit" 
+	name="ns" 
+	id="ns3" 
+	value="$_t._change" 
+	onClick="javascript:
+		f3 = jQuery('#n3').val()^;
+		jQuery.get('/admin/_admin_ajax/__update_table.paj', {'t':'structure','f':'meta_d','fv':f3, 'id':'$form:id'}, function(){return false^;})
+	"
+
+
+
+/>
+</td>
+</tr>
+<tr>
+<td><h4>meta (keywords)</h4></td>
+</tr>
+<tr>
+<td align="center" valign="top">
+<textarea class="form-control"   name="n" wrap="physical" id="n4">$meta_k</textarea>
+</td>
+</tr>
+<tr>
+<td height="40" align="center" valign="bottom">
+<input class="btn btn-primary"
+	style="width:100%"
+	type="submit" 
+	name="ns" 
+	id="ns4" 
+	value="$_t._change" 
+	onClick="javascript:
+		f4 = jQuery('#n4').val()^;
+		jQuery.get('/admin/_admin_ajax/__update_table.paj', {'t':'structure','f':'meta_k','fv':f4, 'id':'$form:id'}, function(){return false^;})
+	"
+
+
+
+/>
+</td>
+</tr>
+
+</table>
+
+
+
+}
